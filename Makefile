@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2025/12/05 13:42:32 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2025/12/05 14:47:15 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,9 @@ TEST_DIR		:= test
 BUILD_DIR		:= build
 REL_BUILD_DIR	:= $(BUILD_DIR)/release
 DBG_BUILD_DIR	:= $(BUILD_DIR)/debug
+ASM_DIR			:= $(BUILD_DIR)/asm
+REL_ASM_DIR		:= $(ASM_DIR)/release
+DBG_ASM_DIR		:= $(ASM_DIR)/debug
 
 # Flags
 WARN_FLAGS		:= -Wall -Wextra -Werror -Wshadow -Wformat=2 -Winline \
@@ -59,6 +62,12 @@ OBJS_DEBUG			:= $(patsubst $(SOURCE_DIR)/%.c, $(DBG_BUILD_DIR)/%.o, $(SOURCES))
 DEPS_RELEASE		:= $(OBJS_RELEASE:.o=.d)
 DEPS_DEBUG			:= $(OBJS_DEBUG:.o=.d)
 
+ASMS_RELEASE		:= $(patsubst $(SOURCE_DIR)/%.c, $(REL_ASM_DIR)/%.s, $(SOURCES))
+ASMS_DEBUG			:= $(patsubst $(SOURCE_DIR)/%.c, $(DBG_ASM_DIR)/%.s, $(SOURCES))
+
+DEPS_REL_ASM		:= $(ASMS_RELEASE:.s=.d)
+DEPS_DBG_ASM		:= $(ASMS_DEBUG:.s=.d)
+
 # Build rules
 all: $(NAME)
 
@@ -72,6 +81,14 @@ $(REL_BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(C_COMPILER) $(C_RELEASE_FLAGS) -c $< -o $@
 	@printf "\033[K"
 
+release_asm: $(ASMS_RELEASE)
+
+$(REL_ASM_DIR)/%.s: $(SOURCE_DIR)/%.c
+	@$(MKDIR) $(@D)
+	@printf "[\033[36mGenerating ASM\033[0m] %-35s\n" "$< (release)"
+	@$(C_COMPILER) $(C_RELEASE_FLAGS) -S $< -o $@
+	@printf "\033[K"
+
 debug: $(DEBUG_NAME)
 
 $(DEBUG_NAME): $(OBJS_DEBUG)
@@ -82,6 +99,14 @@ $(DBG_BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
 	@printf "[\033[32mCompiling\033[0m] %-35s\n" "$< (debug)"
 	@$(C_COMPILER) $(C_DEBUG_FLAGS) -c $< -o $@
+	@printf "\033[K"
+
+debug_asm: $(ASMS_DEBUG)
+
+$(DBG_ASM_DIR)/%.s: $(SOURCE_DIR)/%.c
+	@$(MKDIR) $(@D)
+	@printf "[\033[36mGenerating ASM\033[0m] %-35s\n" "$< (debug)"
+	@$(C_COMPILER) $(C_DEBUG_FLAGS) -S $< -o $@
 	@printf "\033[K"
 
 clean:
@@ -118,7 +143,7 @@ norm:
 	fi
 
 # Phony and deps
-.PHONY: all debug clean fclean re norm
+.PHONY: all release_asm debug debug_asm clean fclean re norm
 
 -include $(DEPS_RELEASE) $(DEPS_DEBUG)
 
