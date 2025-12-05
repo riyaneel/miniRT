@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/05 14:24:36 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/05 14:50:16 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,49 @@ typedef struct s_vec4 {
  * (padding), which helps with compiler optimizations and vectorization (SIMD).
  */
 typedef t_vec4	t_vec3;
+
+static inline t_vec4	vec4_add(const t_vec4 a, const t_vec4 b)
+{
+	t_vec4	final;
+
+	final.x = a.x + b.x;
+	final.y = a.y + b.y;
+	final.z = a.z + b.z;
+	final.w = a.w + b.w;
+	return (final);
+}
+
+static inline t_vec4	vec4_sub(const t_vec4 a, const t_vec4 b)
+{
+	t_vec4	final;
+
+	final.x = a.x - b.x;
+	final.y = a.y - b.y;
+	final.z = a.z - b.z;
+	final.w = a.w - b.w;
+	return (final);
+}
+
+static inline t_vec4	vec4_mul(const t_vec4 a, const t_vec4 b)
+{
+	t_vec4	final;
+
+	final.x = a.x * b.x;
+	final.y = a.y * b.y;
+	final.z = a.z * b.z;
+	final.w = a.w * b.w;
+	return (final);
+}
+
+static inline t_vec4	vec4_div(const t_vec4 a, const t_vec4 b)
+{
+	t_vec4	final;
+
+	final.x = a.x / b.x;
+	final.y = a.y / b.y;
+	final.z = a.z / b.z;
+	final.w = a.w / b.w;
+	return (final);
+}
 
 #endif // RT_VECTORS_H
