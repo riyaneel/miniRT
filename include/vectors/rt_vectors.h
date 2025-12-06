@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/06 20:17:07 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:25:10 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,22 @@ static inline t_vec4	vec4_mul(const t_vec4 a, const t_vec4 b)
 static inline t_vec4	vec4_div(const t_vec4 a, const t_vec4 b)
 {
 	return ((t_vec4){a.v / b.v});
+}
+
+static inline float	vec4_dot(const t_vec4 a, const t_vec4 b)
+{
+	t_v4sf	mul;
+	t_v4sf	shuf_high;
+	t_v4sf	sum_high;
+	t_v4sf	shuf_odd;
+	t_v4sf	sum_final;
+
+	mul = a.v * b.v;
+	shuf_high = __builtin_shufflevector(mul, mul, 2, 3, 2, 3);
+	sum_high = mul + shuf_high;
+	shuf_odd = __builtin_shufflevector(sum_high, sum_high, 1, 1, 1, 1);
+	sum_final = sum_high + shuf_odd;
+	return ((t_vec4){.v = sum_final}.x);
 }
 
 #endif // RT_VECTORS_H
