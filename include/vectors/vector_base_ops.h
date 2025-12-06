@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 20:50:45 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/06 20:51:22 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/06 21:55:50 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,19 @@
 # define VECTOR_BASE_OPS_H
 
 # include "vector_types.h"
+
+/**
+ * @brief Initializes a new vector with specific components.
+ * @param x The x component.
+ * @param y The y component.
+ * @param z The z component.
+ * @param w The w component (usually 0 for a direction, 1 for a point).
+ * @return The initialized vector.
+ */
+static inline t_vec4	vec_init(float x, float y, float z, float w)
+{
+	return ((t_vec4){x, y, z, w});
+}
 
 /**
  * @brief Performs component-wise addition of two vectors.
