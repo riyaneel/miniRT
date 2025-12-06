@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2025/12/05 14:47:15 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2025/12/06 07:19:05 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,8 +47,8 @@ SECURE_FLAGS		:= -fstack-protector-strong
 INCLUDE_FLAGS		:= -I$(INCLUDE_DIR)
 
 C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
-						$(INCLUDE_FLAGS) -std=c99
-C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv
+						$(INCLUDE_FLAGS) -std=c11
+C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
 C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
 
 
