@@ -43,3 +43,4 @@ build/
 miniRT
 miniRT_debug
 miniRT_sanitized
+compile_commands.json
