@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:42:42 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/06 07:19:29 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:53:04 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "rt_vectors.h"
+#include "vectors/rt_vectors.h"
 
 static inline bool	parse_float(const char *str, float *out)
 {
@@ -52,6 +52,7 @@ static void	process_operations(const t_vec4 a, const t_vec4 b)
 	const t_vec4	sub_v = vec4_sub(a, b);
 	const t_vec4	mul_v = vec4_mul(a, b);
 	const t_vec4	div_v = vec4_div(a, b);
+	const float		dot = vec4_dot(a, b);
 
 	__asm__ volatile ("" ::: "memory");
 	printf("AddVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
@@ -62,6 +63,7 @@ static void	process_operations(const t_vec4 a, const t_vec4 b)
 		(double)mul_v.x, (double)mul_v.y, (double)mul_v.z, (double)mul_v.w);
 	printf("DivVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
 		(double)div_v.x, (double)div_v.y, (double)div_v.z, (double)div_v.w);
+	printf("Dot -> %.10f\n", (double)dot);
 }
 
 int	main(const int argc, char **argv)
