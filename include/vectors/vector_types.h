@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 20:28:17 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/06 21:55:43 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/07 12:16:34 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,18 @@ typedef union u_vec4 {
  * the 'w' component being ignored or used for alignment.
  */
 typedef t_vec4	t_vec3;
+
+/**
+ * @brief Initializes a new vector with specific components.
+ * @param x The x component.
+ * @param y The y component.
+ * @param z The z component.
+ * @param w The w component (usually 0 for a direction, 1 for a point).
+ * @return The initialized vector.
+ */
+static inline t_vec4	vec_init(float x, float y, float z, float w)
+{
+	return ((t_vec4){x, y, z, w});
+}
 
 #endif // VECTOR_TYPES_H
