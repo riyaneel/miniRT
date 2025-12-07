@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:42:42 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/06 20:53:04 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/07 12:06:29 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,7 @@ static void	process_operations(const t_vec4 a, const t_vec4 b)
 	const t_vec4	sub_v = vec4_sub(a, b);
 	const t_vec4	mul_v = vec4_mul(a, b);
 	const t_vec4	div_v = vec4_div(a, b);
-	const float		dot = vec4_dot(a, b);
 
-	__asm__ volatile ("" ::: "memory");
 	printf("AddVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
 		(double)add_v.x, (double)add_v.y, (double)add_v.z, (double)add_v.w);
 	printf("SubVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
@@ -63,7 +61,19 @@ static void	process_operations(const t_vec4 a, const t_vec4 b)
 		(double)mul_v.x, (double)mul_v.y, (double)mul_v.z, (double)mul_v.w);
 	printf("DivVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
 		(double)div_v.x, (double)div_v.y, (double)div_v.z, (double)div_v.w);
+}
+
+static void	process_more_ops(const t_vec4 a, const t_vec4 b)
+{
+	const float		dot = vec4_dot(a, b);
+	const t_vec4	cross = vec4_cross(a, b);
+	const t_vec4	norm = vec4_normalize(a);
+
 	printf("Dot -> %.10f\n", (double)dot);
+	printf("CrossVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
+		(double)cross.x, (double)cross.y, (double)cross.z, (double)cross.w);
+	printf("NormalizeVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
+		(double)norm.x, (double)norm.y, (double)norm.z, (double)norm.w);
 }
 
 int	main(const int argc, char **argv)
@@ -74,5 +84,6 @@ int	main(const int argc, char **argv)
 	if (!parse_args(argc, argv, &a, &b))
 		return (1);
 	process_operations(a, b);
+	process_more_ops(a, b);
 	return (0);
 }

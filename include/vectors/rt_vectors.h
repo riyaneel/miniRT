@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/06 22:35:52 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/07 12:05:55 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,22 @@ static inline t_vec4	vec4_cross(const t_vec4 a, const t_vec4 b)
 	const t_v4sf	r_vec = (a_yzx * b_zxy) - (a_zxy * b_yzx);
 
 	return ((t_vec4){.v = r_vec});
+}
+
+static inline t_vec4	vec4_normalize(const t_vec4 a)
+{
+	const t_v4sf	mul = a.v * a.v;
+	t_v4sf			shuf;
+	t_v4sf			sum;
+	t_v4sf			dot;
+	t_v4sf			len_sq;
+
+	shuf = __builtin_shufflevector(mul, mul, 2, 3, 2, 3);
+	sum = mul + shuf;
+	shuf = __builtin_shufflevector(sum, sum, 1, 1, 1, 1);
+	dot = sum + shuf;
+	len_sq = __builtin_shufflevector(dot, dot, 0, 0, 0, 0);
+	return ((t_vec4){.v = a.v * __builtin_ia32_rsqrtps(len_sq)});
 }
 
 #endif // RT_VECTORS_H
