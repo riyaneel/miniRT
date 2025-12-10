@@ -6,12 +6,14 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/07 12:05:55 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2025/12/10 20:43:12 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_VECTORS_H
 # define RT_VECTORS_H
+
+# include <float.h>
 
 # include "vector_base_ops.h"
 
@@ -38,9 +40,9 @@ static inline t_vec4	vec4_cross(const t_vec4 a, const t_vec4 b)
 	return ((t_vec4){.v = r_vec});
 }
 
-static inline t_vec4	vec4_normalize(const t_vec4 a)
+static inline t_vec4	vec4_normalize(const t_vec4 vec)
 {
-	const t_v4sf	mul = a.v * a.v;
+	const t_v4sf	mul = vec.v * vec.v;
 	t_v4sf			shuf;
 	t_v4sf			sum;
 	t_v4sf			dot;
@@ -51,7 +53,27 @@ static inline t_vec4	vec4_normalize(const t_vec4 a)
 	shuf = __builtin_shufflevector(sum, sum, 1, 1, 1, 1);
 	dot = sum + shuf;
 	len_sq = __builtin_shufflevector(dot, dot, 0, 0, 0, 0);
-	return ((t_vec4){.v = a.v * __builtin_ia32_rsqrtps(len_sq)});
+	return ((t_vec4){.v = vec.v * __builtin_ia32_rsqrtps(len_sq)});
+}
+
+static inline float	vec4_len_sq(const t_vec4 vec)
+{
+	return (vec4_dot(vec, vec));
+}
+
+static inline float	vec4_len(const t_vec4 vec)
+{
+	const float	eps = FLT_EPSILON;
+	float		ls;
+	t_v4sf		vals;
+	t_v4sf		safe_vals;
+	t_v4sf		inv;
+
+	ls = vec4_len_sq(vec);
+	vals = (t_v4sf){ls, ls, ls, ls};
+	safe_vals = __builtin_ia32_maxps(vals, (t_v4sf){eps, eps, eps, eps});
+	inv = __builtin_ia32_rsqrtps(safe_vals);
+	return (ls * (t_vec4){.v = inv}.x);
 }
 
 #endif // RT_VECTORS_H
