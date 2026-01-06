@@ -6,14 +6,13 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 13:23:53 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/06 13:35:09 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/06 14:34:45 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ARENA_ALLOCATOR_TYPES_H
 # define ARENA_ALLOCATOR_TYPES_H
 
-# include <stdbool.h>
 # include <stddef.h>
 # include <stdint.h>
 
