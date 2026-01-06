@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2025/12/07 11:18:11 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/06 13:21:55 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,20 +54,23 @@ C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
 
 
 # Files
-SOURCE_FILES		:= main.c
+ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c arena_create.c \
+						arena_destroy.c arena_get_capacity.c arena_get_used.c arena_reset.c)
+CORE_FILES			:= $(addprefix core/, core_init.c)
+SOURCE_FILES		:= $(ALLOCATOR_FILES) $(CORE_FILES) main.c
 SOURCES				:= $(addprefix $(SOURCE_DIR)/, $(SOURCE_FILES))
 
-OBJS_RELEASE		:= $(patsubst $(SOURCE_DIR)/%.c, $(REL_RT_DIR)/%.o, $(SOURCES))
-OBJS_DEBUG			:= $(patsubst $(SOURCE_DIR)/%.c, $(DBG_RT_DIR)/%.o, $(SOURCES))
+OBJS_RELEASE	:= $(patsubst $(SOURCE_DIR)/%.c, $(REL_RT_DIR)/%.o, $(SOURCES))
+OBJS_DEBUG		:= $(patsubst $(SOURCE_DIR)/%.c, $(DBG_RT_DIR)/%.o, $(SOURCES))
 
-DEPS_RELEASE		:= $(OBJS_RELEASE:.o=.d)
-DEPS_DEBUG			:= $(OBJS_DEBUG:.o=.d)
+DEPS_RELEASE	:= $(OBJS_RELEASE:.o=.d)
+DEPS_DEBUG		:= $(OBJS_DEBUG:.o=.d)
 
-ASMS_RELEASE		:= $(patsubst $(SOURCE_DIR)/%.c, $(REL_ASM_DIR)/%.s, $(SOURCES))
-ASMS_DEBUG			:= $(patsubst $(SOURCE_DIR)/%.c, $(DBG_ASM_DIR)/%.s, $(SOURCES))
+ASMS_RELEASE	:= $(patsubst $(SOURCE_DIR)/%.c, $(REL_ASM_DIR)/%.s, $(SOURCES))
+ASMS_DEBUG		:= $(patsubst $(SOURCE_DIR)/%.c, $(DBG_ASM_DIR)/%.s, $(SOURCES))
 
-DEPS_REL_ASM		:= $(ASMS_RELEASE:.s=.d)
-DEPS_DBG_ASM		:= $(ASMS_DEBUG:.s=.d)
+DEPS_REL_ASM	:= $(ASMS_RELEASE:.s=.d)
+DEPS_DBG_ASM	:= $(ASMS_DEBUG:.s=.d)
 
 # Build rules
 all: $(NAME)
