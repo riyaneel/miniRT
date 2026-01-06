@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/06 13:21:55 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/06 15:14:08 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,11 +47,16 @@ DEPENDENCIES_FLAGS	:= -MMD -MP
 SECURE_FLAGS		:= -fstack-protector-strong
 INCLUDE_FLAGS		:= -I$(INCLUDE_DIR)
 
-C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
-						$(INCLUDE_FLAGS) -std=c11
-C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
-C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
+LTO_FLAGS			:= -flto
+SAN_FLAGS			:= -fsanitize=address,undefined
 
+C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
+						$(INCLUDE_FLAGS) -std=c11 -march=native
+C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math $(LTO_FLAGS)
+LD_RELEASE_FLAGS	:= $(LTO_FLAGS)
+
+C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv $(LTO_FLAGS) $(SAN_FLAGS)
+LD_DEBUG_FLAGS		:= $(LTO_FLAGS) $(SAN_FLAGS)
 
 # Files
 ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c arena_create.c \
@@ -77,7 +82,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS_RELEASE)
 	@printf "[\033[33mLinking\033[0m]   %-35s\n" "$@"
-	@$(C_COMPILER) $^ -o $@
+	@$(C_COMPILER) $(LD_RELEASE_FLAGS) $^ -o $@
 
 $(REL_RT_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
@@ -97,7 +102,7 @@ debug: $(DEBUG_NAME)
 
 $(DEBUG_NAME): $(OBJS_DEBUG)
 	@printf "[\033[33mLinking\033[0m]   %-35s\n" "$@"
-	@$(C_COMPILER) $^ -o $@
+	@$(C_COMPILER) $(LD_DEBUG_FLAGS) $^ -o $@
 
 $(DBG_RT_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
