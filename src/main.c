@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 14:57:21 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/06 15:01:02 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/06 17:43:55 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static void	run_arena_bench(char **argv, const int iterations)
 {
 	t_vec4					data_a;
 	t_vec4					data_b;
-	const t_arena_config	conf = {.capacity = 1024 * 1024 * 16, .oom_policy = 0};
+	const t_arena_config	conf = {.capacity = 1024 * 1024 * 16};
 	t_arena					*arena = arena_create(conf);
 	t_vec4					*dyn_a;
 	t_vec4					*dyn_b;
@@ -130,8 +130,9 @@ int	main(const int argc, char **argv)
 		printf("Usage: %s <8 floats>\nExample: %s 1 2 3 4 5 6 7 8\n", argv[0], argv[0]);
 		return (1);
 	}
-	printf("\n>>> STARTING BENCHMARK (10M iterations) <<<\n");
+	printf(">>> STARTING BENCHMARK (10M iterations) <<<\n");
 	run_malloc_bench(argv, 10000000);
 	run_arena_bench(argv, 10000000);
+	printf("Final Bench SINK -> %.5f\n", (double)g_bench_sink);
 	return (0);
 }

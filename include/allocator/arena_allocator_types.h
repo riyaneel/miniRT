@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 13:23:53 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/06 16:00:45 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/06 17:40:26 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,7 @@
 
 typedef struct s_arena_config {
 	int64_t	capacity;
-	int32_t	oom_policy;
-	int32_t	reserved;
-} __attribute__((aligned(16)))	t_arena_config;
+} __attribute__((aligned(8)))	t_arena_config;
 
 typedef struct s_arena {
 	uintptr_t	current_ptr;
