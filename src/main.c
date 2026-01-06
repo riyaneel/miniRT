@@ -5,15 +5,18 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/05 13:42:42 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/07 12:06:29 by rel-qoqu         ###   ########.fr       */
+/*   Created: 2025/12/05 14:57:21 by rel-qoqu          #+#    #+#             */
+/*   Updated: 2026/01/06 15:01:02 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
+#include "allocator/arena_allocator.h"
+#include "core/rt_core.h"
 #include "vectors/rt_vectors.h"
 
 static inline bool	parse_float(const char *str, float *out)
@@ -27,13 +30,11 @@ static inline bool	parse_float(const char *str, float *out)
 }
 
 __attribute__((noinline))
-static bool	parse_args(const int argc, char **argv, t_vec4 *a, t_vec4 *b)
+static bool	parse_args(char **argv, t_vec4 *a, t_vec4 *b)
 {
 	float	buffer[8];
 	int		i;
 
-	if (argc != 9)
-		return (false);
 	i = 0;
 	while (i < 8)
 	{
@@ -46,44 +47,91 @@ static bool	parse_args(const int argc, char **argv, t_vec4 *a, t_vec4 *b)
 	return (true);
 }
 
-static void	process_operations(const t_vec4 a, const t_vec4 b)
-{
-	const t_vec4	add_v = vec4_add(a, b);
-	const t_vec4	sub_v = vec4_sub(a, b);
-	const t_vec4	mul_v = vec4_mul(a, b);
-	const t_vec4	div_v = vec4_div(a, b);
+volatile float	g_bench_sink;
 
-	printf("AddVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
-		(double)add_v.x, (double)add_v.y, (double)add_v.z, (double)add_v.w);
-	printf("SubVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
-		(double)sub_v.x, (double)sub_v.y, (double)sub_v.z, (double)sub_v.w);
-	printf("MulVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
-		(double)mul_v.x, (double)mul_v.y, (double)mul_v.z, (double)mul_v.w);
-	printf("DivVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
-		(double)div_v.x, (double)div_v.y, (double)div_v.z, (double)div_v.w);
+static inline void	process_silent(const t_vec4 *a, const t_vec4 *b)
+{
+	const t_vec4	r1 = vec4_add(*a, *b);
+	const t_vec4	r2 = vec4_mul(*a, *b);
+	const float		dot = vec4_dot(*a, *b);
+
+	g_bench_sink += r1.x + r2.y + dot;
 }
 
-static void	process_more_ops(const t_vec4 a, const t_vec4 b)
+static void	run_malloc_bench(char **argv, const int iterations)
 {
-	const float		dot = vec4_dot(a, b);
-	const t_vec4	cross = vec4_cross(a, b);
-	const t_vec4	norm = vec4_normalize(a);
+	t_vec4			data_a;
+	t_vec4			data_b;
+	t_vec4			*dyn_a;
+	t_vec4			*dyn_b;
 
-	printf("Dot -> %.10f\n", (double)dot);
-	printf("CrossVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
-		(double)cross.x, (double)cross.y, (double)cross.z, (double)cross.w);
-	printf("NormalizeVec -> a -> %.2f, b -> %.2f, c -> %.2f, d -> %.2f\n",
-		(double)norm.x, (double)norm.y, (double)norm.z, (double)norm.w);
+	if (!parse_args(argv, &data_a, &data_b))
+		return ;
+	const clock_t	start = clock();
+	for (int k = 0; k < iterations; k++)
+	{
+		dyn_a = malloc(sizeof(t_vec4));
+		dyn_b = malloc(sizeof(t_vec4));
+		if (dyn_a && dyn_b)
+		{
+			*dyn_a = data_a;
+			*dyn_b = data_b;
+			process_silent(dyn_a, dyn_b);
+		}
+		free(dyn_a);
+		free(dyn_b);
+	}
+	const double	elapsed = (double)(clock() - start) / CLOCKS_PER_SEC;
+	printf("[MALLOC] Time: %.5f sec\n", elapsed);
+}
+
+static void	run_arena_bench(char **argv, const int iterations)
+{
+	t_vec4					data_a;
+	t_vec4					data_b;
+	const t_arena_config	conf = {.capacity = 1024 * 1024 * 16, .oom_policy = 0};
+	t_arena					*arena = arena_create(conf);
+	t_vec4					*dyn_a;
+	t_vec4					*dyn_b;
+
+	if (!arena)
+	{
+		printf("Arena creation failed\n");
+		return ;
+	}
+	if (!parse_args(argv, &data_a, &data_b))
+	{
+		arena_destroy(arena);
+		return ;
+	}
+	const clock_t	start = clock();
+	for (int k = 0; k < iterations; k++)
+	{
+		dyn_a = arena_alloc(arena, sizeof(t_vec4));
+		dyn_b = arena_alloc(arena, sizeof(t_vec4));
+		if (dyn_a && dyn_b)
+		{
+			*dyn_a = data_a;
+			*dyn_b = data_b;
+			process_silent(dyn_a, dyn_b);
+		}
+		arena_reset(arena);
+	}
+	const double	elapsed = (double)(clock() - start) / CLOCKS_PER_SEC;
+	printf("[ARENA ] Time: %.5f sec\n", elapsed);
+	arena_destroy(arena);
 }
 
 int	main(const int argc, char **argv)
 {
-	t_vec4	a;
-	t_vec4	b;
-
-	if (!parse_args(argc, argv, &a, &b))
+	core_init();
+	if (argc != 9)
+	{
+		printf("Usage: %s <8 floats>\nExample: %s 1 2 3 4 5 6 7 8\n", argv[0], argv[0]);
 		return (1);
-	process_operations(a, b);
-	process_more_ops(a, b);
+	}
+	printf("\n>>> STARTING BENCHMARK (10M iterations) <<<\n");
+	run_malloc_bench(argv, 10000000);
+	run_arena_bench(argv, 10000000);
 	return (0);
 }
