@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 13:23:53 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/06 14:34:45 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/06 16:00:45 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,10 @@ typedef struct s_arena {
 	uintptr_t	base_ptr;
 	size_t		total_size;
 } __attribute__((aligned(32)))	t_arena;
+
+typedef struct s_tmp_arena {
+	t_arena		*arena;
+	uintptr_t	saved_ptr;
+} __attribute__((aligned(16)))	t_tmp_arena;
 
 #endif // ARENA_ALLOCATOR_TYPES_H

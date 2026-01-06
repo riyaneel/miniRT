@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 07:46:04 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/05 21:21:17 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/06 16:08:40 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,10 @@ void		arena_destroy(t_arena *arena);
 
 size_t		arena_get_used(const t_arena *arena);
 
-size_t	arena_get_capacity(const t_arena *arena);
+size_t		arena_get_capacity(const t_arena *arena);
+
+t_tmp_arena	arena_begin_tmp(t_arena *arena);
+
+void		arena_end_tmp(t_tmp_arena tmp);
 
 #endif // ARENA_ALLOCATOR_H

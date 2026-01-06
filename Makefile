@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/06 15:14:08 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/06 16:17:53 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,8 +59,10 @@ C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv $(LTO_FLAGS) $(SAN_FLAGS)
 LD_DEBUG_FLAGS		:= $(LTO_FLAGS) $(SAN_FLAGS)
 
 # Files
-ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c arena_create.c \
-						arena_destroy.c arena_get_capacity.c arena_get_used.c arena_reset.c)
+ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c \
+						arena_alloc_array.c arena_begin_tmp.c arena_create.c \
+						arena_destroy.c arena_end_tmp.c arena_get_capacity.c \
+						arena_get_used.c arena_reset.c)
 CORE_FILES			:= $(addprefix core/, core_init.c)
 SOURCE_FILES		:= $(ALLOCATOR_FILES) $(CORE_FILES) main.c
 SOURCES				:= $(addprefix $(SOURCE_DIR)/, $(SOURCE_FILES))
