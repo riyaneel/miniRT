@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/06 16:17:53 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/06 18:50:56 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,10 +52,10 @@ SAN_FLAGS			:= -fsanitize=address,undefined
 
 C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
 						$(INCLUDE_FLAGS) -std=c11 -march=native
-C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math $(LTO_FLAGS)
+C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
 LD_RELEASE_FLAGS	:= $(LTO_FLAGS)
 
-C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv $(LTO_FLAGS) $(SAN_FLAGS)
+C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
 LD_DEBUG_FLAGS		:= $(LTO_FLAGS) $(SAN_FLAGS)
 
 # Files
@@ -89,7 +89,7 @@ $(NAME): $(OBJS_RELEASE)
 $(REL_RT_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
 	@printf "[\033[32mCompiling\033[0m] %-35s\n" "$< (release)"
-	@$(C_COMPILER) $(C_RELEASE_FLAGS) -c $< -o $@
+	@$(C_COMPILER) $(C_RELEASE_FLAGS) $(LTO_FLAGS) -c $< -o $@
 	@printf "\033[K"
 
 release_asm: $(ASMS_RELEASE)
@@ -109,7 +109,7 @@ $(DEBUG_NAME): $(OBJS_DEBUG)
 $(DBG_RT_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
 	@printf "[\033[32mCompiling\033[0m] %-35s\n" "$< (debug)"
-	@$(C_COMPILER) $(C_DEBUG_FLAGS) -c $< -o $@
+	@$(C_COMPILER) $(C_DEBUG_FLAGS) $(LTO_FLAGS) $(SAN_FLAGS) -c $< -o $@
 	@printf "\033[K"
 
 debug_asm: $(ASMS_DEBUG)
