@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 22:15:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 22:42:36 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/11 23:11:25 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,6 @@
 #include "core/ctype/ft_ctype.h"
 #include "core/memory/ft_memory.h"
 #include "core/string/ft_string.h"
-
-static void	count_objects(t_scene *scn, char *data)
-{
-	char	*p;
-
-	p = data;
-	while (*p)
-	{
-		skip_formatting(&p);
-		if (!*p)
-			break ;
-		if (!ft_strncmp(p, "sp", 2) && ft_isspace(p[2]))
-			scn->num_spheres++;
-		else if (!ft_strncmp(p, "pl", 2) && ft_isspace(p[2]))
-			scn->num_planes++;
-		else if (!ft_strncmp(p, "cy", 2) && ft_isspace(p[2]))
-			scn->num_cylinders++;
-		while (*p && *p != '\n')
-			p++;
-	}
-}
 
 static bool	fill_objects(t_scene *scn, char *data)
 {
@@ -58,6 +37,7 @@ static bool	fill_objects(t_scene *scn, char *data)
 			p++;
 			scn->ambient.ratio = parse_float(&p);
 			scn->ambient.color = parse_color(&p);
+			scn->ambient.color = vec4_scale(scn->ambient.color, scn->ambient.ratio);
 			scn->has_amb = true;
 		}
 		else if (*p == 'C' && ft_isspace(p[1]))
@@ -82,9 +62,35 @@ static bool	fill_objects(t_scene *scn, char *data)
 			parse_plane(scn, &ip, &p);
 		else if (!ft_strncmp(p, "cy", 2))
 			parse_cylinder(scn, &ic, &p);
-		while (*p && *p != '\n') p++;
+		while (*p && *p != '\n')
+			p++;
+		if (*p == '\n')
+			p++;
 	}
 	return (true);
+}
+
+static void	count_objects(t_scene *scn, char *data)
+{
+	char	*p;
+
+	p = data;
+	while (*p)
+	{
+		skip_formatting(&p);
+		if (!*p)
+			break ;
+		if (!ft_strncmp(p, "sp", 2) && ft_isspace(p[2]))
+			scn->num_spheres++;
+		else if (!ft_strncmp(p, "pl", 2) && ft_isspace(p[2]))
+			scn->num_planes++;
+		else if (!ft_strncmp(p, "cy", 2) && ft_isspace(p[2]))
+			scn->num_cylinders++;
+		while (*p && *p != '\n')
+			p++;
+		if (*p == '\n')
+			p++;
+	}
 }
 
 static char	*read_file_to_arena(t_arena *arena, const char *file)
@@ -95,11 +101,11 @@ static char	*read_file_to_arena(t_arena *arena, const char *file)
 	ssize_t	bytes_read;
 
 	fd = open(file, O_RDONLY);
-	if (fd < 0)
-		return (NULL);
+	if (fd < 0) return (NULL);
+
 	len = (size_t)lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
-	if (len <= 0)
+	if (len == 0)
 	{
 		close(fd);
 		return (NULL);
@@ -111,12 +117,10 @@ static char	*read_file_to_arena(t_arena *arena, const char *file)
 		return (NULL);
 	}
 	bytes_read = read(fd, buf, len);
-	if (bytes_read != (ssize_t)len)
-	{
-		// todo: add warning
-	}
-	buf[len] = '\0';
 	close(fd);
+	if (bytes_read < 0)
+		return (NULL);
+	buf[bytes_read] = '\0';
 	return (buf);
 }
 
