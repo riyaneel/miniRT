@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/11 20:11:23 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/11 20:24:39 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,10 +55,7 @@ C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS)
 LD_LIBS				:= -L$(MLX_DIR) -lmlx -lX11 -lGL -lm
 
 C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
-LD_RELEASE_FLAGS	:= $(LTO_FLAGS) $(LD_LIBS)
-
 C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
-LD_DEBUG_FLAGS		:= $(LTO_FLAGS) $(SAN_FLAGS) $(LD_LIBS)
 
 # Files
 ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c \
@@ -66,7 +63,8 @@ ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c \
 						arena_destroy.c arena_end_tmp.c arena_get_capacity.c \
 						arena_get_used.c arena_reset.c)
 CORE_FILES			:= $(addprefix core/, core_init.c)
-GRAPHICS_FILES		:= $(addprefix graphics/, graphics_init.c graphics_shutdown.c)
+GRAPHICS_FILES		:= $(addprefix graphics/, graphics_clear.c graphics_init.c \
+							graphics_present.c graphics_setup_hooks.c graphics_shutdown.c)
 SOURCE_FILES		:= $(ALLOCATOR_FILES) $(CORE_FILES) $(GRAPHICS_FILES) main.c
 SOURCES				:= $(addprefix $(SOURCE_DIR)/, $(SOURCE_FILES))
 
@@ -87,7 +85,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS_RELEASE)
 	@printf "[\033[33mLinking\033[0m]   %-35s\n" "$@"
-	@$(C_COMPILER) $(LD_RELEASE_FLAGS) $^ -o $@
+	@$(C_COMPILER) $(LTO_FLAGS) $^ $(LD_LIBS) -o $@
 
 $(REL_RT_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
@@ -107,7 +105,7 @@ debug: $(DEBUG_NAME)
 
 $(DEBUG_NAME): $(OBJS_DEBUG)
 	@printf "[\033[33mLinking\033[0m]   %-35s\n" "$@"
-	@$(C_COMPILER) $(LD_DEBUG_FLAGS) $^ -o $@
+	@$(C_COMPILER) $(LTO_FLAGS) $(SAN_FLAGS) $^ $(LD_LIBS) -o $@
 
 $(DBG_RT_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@$(MKDIR) $(@D)
