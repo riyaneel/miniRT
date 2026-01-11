@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/06 18:50:56 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/11 20:11:23 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ NORMI			:= norminette
 # Directories
 SOURCE_DIR		:= src
 INCLUDE_DIR		:= include
-LIB_DIR			:= lib
+MLX_DIR			:= mlx
 TEST_DIR		:= test
 BUILD_DIR		:= build
 RT_DIR			:= $(BUILD_DIR)/rt
@@ -45,18 +45,20 @@ WARN_FLAGS		:= -Wall -Wextra -Werror -Wshadow -Wformat=2 -Winline \
 POSIX_FLAGS			:= -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L
 DEPENDENCIES_FLAGS	:= -MMD -MP
 SECURE_FLAGS		:= -fstack-protector-strong
-INCLUDE_FLAGS		:= -I$(INCLUDE_DIR)
+INCLUDE_FLAGS		:= -I$(INCLUDE_DIR) -isystem $(MLX_DIR)/include
 
 LTO_FLAGS			:= -flto
 SAN_FLAGS			:= -fsanitize=address,undefined
 
 C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
 						$(INCLUDE_FLAGS) -std=c11 -march=native
+LD_LIBS				:= -L$(MLX_DIR) -lmlx -lX11 -lGL -lm
+
 C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
-LD_RELEASE_FLAGS	:= $(LTO_FLAGS)
+LD_RELEASE_FLAGS	:= $(LTO_FLAGS) $(LD_LIBS)
 
 C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
-LD_DEBUG_FLAGS		:= $(LTO_FLAGS) $(SAN_FLAGS)
+LD_DEBUG_FLAGS		:= $(LTO_FLAGS) $(SAN_FLAGS) $(LD_LIBS)
 
 # Files
 ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c \
@@ -64,7 +66,8 @@ ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c \
 						arena_destroy.c arena_end_tmp.c arena_get_capacity.c \
 						arena_get_used.c arena_reset.c)
 CORE_FILES			:= $(addprefix core/, core_init.c)
-SOURCE_FILES		:= $(ALLOCATOR_FILES) $(CORE_FILES) main.c
+GRAPHICS_FILES		:= $(addprefix graphics/, graphics_init.c graphics_shutdown.c)
+SOURCE_FILES		:= $(ALLOCATOR_FILES) $(CORE_FILES) $(GRAPHICS_FILES) main.c
 SOURCES				:= $(addprefix $(SOURCE_DIR)/, $(SOURCE_FILES))
 
 OBJS_RELEASE	:= $(patsubst $(SOURCE_DIR)/%.c, $(REL_RT_DIR)/%.o, $(SOURCES))
