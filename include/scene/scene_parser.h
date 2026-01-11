@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:43:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 22:17:24 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/11 22:35:09 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ t_vec4	parse_vec3(char **p, float w);
 
 t_vec4	parse_color(char **p);
 
-void	parse_sphere(t_scene *scn, int *idx, char **p);
+void	parse_sphere(const t_scene *scn, int *idx, char **p);
 
-void	parse_plane(t_scene *scn, int *idx, char **p);
+void	parse_plane(const t_scene *scn, int *idx, char **p);
 
 void	parse_cylinder(t_scene *scn, int *idx, char **p);
 

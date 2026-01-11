@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 19:38:06 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 19:48:13 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/11 22:48:45 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include "mlx.h"
 
 # include "vectors/vector_types.h"
+
+typedef struct s_scene	t_scene;
 
 typedef struct s_framebuffer {
 	int		width;
@@ -30,6 +32,7 @@ typedef struct s_graphics {
 	t_framebuffer	*framebuffer;
 	int				width;
 	int				height;
+	t_scene			*scene;
 }	t_graphics;
 
 #endif // GRAPHICS_TYPES_H

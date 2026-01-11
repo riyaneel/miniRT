@@ -6,12 +6,14 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:41:25 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 22:06:10 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/11 22:41:18 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SCENE_TYPES_H
 # define SCENE_TYPES_H
+
+# include <stdbool.h>
 
 # include "vectors/vector_types.h"
 
