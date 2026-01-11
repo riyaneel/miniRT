@@ -1,3 +1,6 @@
 [submodule "mlx"]
 	path = mlx
 	url = git@github.com:ms-is-coding/MiniLibX-OpenGL.git
+[submodule "libft"]
+	path = libft
+	url = git@github.com:Purpose-Dev/libft.git
