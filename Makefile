@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/11 23:33:02 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/12 03:47:17 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,7 +71,7 @@ ALLOCATOR_FILES		:= $(addprefix allocator/, arena_alloc.c arena_alloc_align.c \
 CORE_FILES			:= $(addprefix core/, core_init.c)
 GRAPHICS_FILES		:= $(addprefix graphics/, graphics_clear.c graphics_init.c \
 							graphics_present.c graphics_setup_hooks.c graphics_shutdown.c)
-RAYTRACER_FILES		:= $(addprefix raytracer/, camera_init_viewport.c)
+RAYTRACER_FILES		:= $(addprefix raytracer/, camera_init_viewport.c render_frame.c)
 SCENE_FILES			:= $(addprefix scene/, parse_color.c parse_cylinder.c parse_float.c \
 							parse_plane.c parse_sphere.c parse_vec3.c scene_parse.c \
 							skip_formatting.c)
