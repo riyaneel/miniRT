@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:41:25 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 22:41:18 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 00:17:30 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ typedef struct s_sphere {
 	t_vec4	center;
 	t_vec4	color;
 	float	radius;
-	float	padding[3];
+	float	radius_sq;
+	float	padding[2];
 }	t_sphere;
 
 typedef struct s_plane {
