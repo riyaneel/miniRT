@@ -1,34 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ray_types.h                                        :+:      :+:    :+:   */
+/*   render.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/11 21:27:39 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 03:51:36 by rel-qoqu         ###   ########.fr       */
+/*   Created: 2026/01/12 03:46:13 by rel-qoqu          #+#    #+#             */
+/*   Updated: 2026/01/12 04:04:12 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RAY_TYPES_H
-# define RAY_TYPES_H
+#ifndef RENDER_H
+# define RENDER_H
 
-# include <stdbool.h>
+# include "graphics/graphics.h"
 
-# include "vectors/vector_types.h"
+void	render_frame(const t_graphics *gfx);
 
-typedef struct s_ray {
-	t_vec4	origin;
-	t_vec4	dir;
-}	t_ray;
-
-typedef struct s_hit_record {
-	t_vec4	p;
-	t_vec4	normal;
-	t_vec4	color_obj;
-	float	t;
-	bool	front_face;
-	char	padding[11];
-}	t_hit;
-
-#endif // RAY_TYPES_H
+#endif // RENDER_H

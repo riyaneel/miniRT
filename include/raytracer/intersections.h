@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 00:18:38 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 01:44:33 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 04:02:31 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static inline bool	hit_plane(const t_plane *pl, const t_ray *ray,
 	t_vec4	po;
 
 	denom = vec4_dot(ray->dir, pl->normal);
-	if (fabsf(denom) < 0.0001f)
+	if (fabsf(denom) < 0.01f)
 		return (false);
 	po = vec4_sub(pl->point, ray->origin);
 	t = vec4_dot(po, pl->normal) / denom;
