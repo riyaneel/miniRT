@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 22:15:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 23:11:25 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 20:05:28 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,13 @@
 static bool	fill_objects(t_scene *scn, char *data)
 {
 	char	*p;
-	int		is = 0, ip = 0, ic = 0;
+	int		is;
+	int		ip;
+	int		ic;
 
+	is = 0;
+	ip = 0;
+	ic = 0;
 	p = data;
 	while (*p)
 	{
@@ -37,7 +42,8 @@ static bool	fill_objects(t_scene *scn, char *data)
 			p++;
 			scn->ambient.ratio = parse_float(&p);
 			scn->ambient.color = parse_color(&p);
-			scn->ambient.color = vec4_scale(scn->ambient.color, scn->ambient.ratio);
+			scn->ambient.color = vec4_scale(scn->ambient.color,
+					scn->ambient.ratio);
 			scn->has_amb = true;
 		}
 		else if (*p == 'C' && ft_isspace(p[1]))
@@ -101,8 +107,8 @@ static char	*read_file_to_arena(t_arena *arena, const char *file)
 	ssize_t	bytes_read;
 
 	fd = open(file, O_RDONLY);
-	if (fd < 0) return (NULL);
-
+	if (fd < 0)
+		return (NULL);
 	len = (size_t)lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
 	if (len == 0)
@@ -136,15 +142,19 @@ t_scene	*scene_parse(t_arena *arena, const char *filename)
 		return (NULL);
 	}
 	scn = arena_alloc(arena, sizeof(t_scene));
-	if (!scn) return (NULL);
+	if (!scn)
+		return (NULL);
 	ft_bzero(scn, sizeof(t_scene));
 	count_objects(scn, data);
 	if (scn->num_spheres)
-		scn->spheres = arena_alloc_align(arena, sizeof(t_sphere) * (size_t)scn->num_spheres, 16);
+		scn->spheres = arena_alloc_align(arena, sizeof(t_sphere)
+				* (size_t)scn->num_spheres, 16);
 	if (scn->num_planes)
-		scn->planes = arena_alloc_align(arena, sizeof(t_plane) * (size_t)scn->num_planes, 16);
+		scn->planes = arena_alloc_align(arena, sizeof(t_plane)
+				* (size_t)scn->num_planes, 16);
 	if (scn->num_cylinders)
-		scn->cylinders = arena_alloc_align(arena, sizeof(t_cylinder) * (size_t)scn->num_cylinders, 16);
+		scn->cylinders = arena_alloc_align(arena, sizeof(t_cylinder)
+				* (size_t)scn->num_cylinders, 16);
 	fill_objects(scn, data);
 	if (!scn->has_cam || !scn->has_amb || !scn->has_light)
 	{
