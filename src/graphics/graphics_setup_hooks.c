@@ -6,11 +6,12 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 20:05:45 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 20:52:40 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 03:52:24 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "graphics/graphics.h"
+#include "raytracer/render.h"
 
 static int	on_window_close(void *param)
 {
@@ -38,7 +39,7 @@ static int	on_render_loop(void *param)
 
 	gfx = (t_graphics *)param;
 	graphics_clear(gfx);
-	// todo: add raytracing in future
+	render_frame(gfx);
 	graphics_present(gfx);
 	return (0);
 }

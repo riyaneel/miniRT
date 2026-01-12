@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 20:04:49 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 20:33:31 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 03:58:55 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 static inline int	vec4_to_bgra(const t_vec4 color)
 {
 	const float			r = fclamp(color.x, 0.0f, 1.0f);
-	const float			g = fclamp(color.x, 0.0f, 1.0f);
-	const float			b = fclamp(color.x, 0.0f, 1.0f);
+	const float			g = fclamp(color.y, 0.0f, 1.0f);
+	const float			b = fclamp(color.z, 0.0f, 1.0f);
 	const unsigned int	ir = (unsigned)(r * 255.99f);
 	const unsigned int	ig = (unsigned)(g * 255.99f);
 
