@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:25:19 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 19:52:58 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 20:19:44 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 
 # include "ray.h"
 # include "scene/scene_types.h"
-
-# define EPSILON 0.05f
 
 static inline bool	check_cap(const t_vec4 center, const t_vec4 normal,
 		const float radius, const t_ray *ray, t_hit *rec, const float t_max)

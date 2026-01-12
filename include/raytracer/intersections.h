@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 00:18:38 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 04:02:31 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 20:19:41 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 
 # include "ray.h"
 # include "scene/scene_types.h"
+
+# define EPSILON 0.001f
 
 static inline bool	hit_sphere(const t_sphere *sp, const t_ray *ray,
 		const float t_min, const float t_max, t_hit *rec)
@@ -55,7 +57,7 @@ static inline bool	hit_plane(const t_plane *pl, const t_ray *ray,
 	t_vec4	po;
 
 	denom = vec4_dot(ray->dir, pl->normal);
-	if (fabsf(denom) < 0.01f)
+	if (fabsf(denom) < EPSILON)
 		return (false);
 	po = vec4_sub(pl->point, ray->origin);
 	t = vec4_dot(po, pl->normal) / denom;

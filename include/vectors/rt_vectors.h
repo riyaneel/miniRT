@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/10 20:43:12 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 20:22:21 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,17 @@ static inline t_vec4	vec4_normalize(const t_vec4 vec)
 	t_v4sf			sum;
 	t_v4sf			dot;
 	t_v4sf			len_sq;
+	t_v4sf			approx;
+	t_v4sf			newton;
 
 	shuf = __builtin_shufflevector(mul, mul, 2, 3, 2, 3);
 	sum = mul + shuf;
 	shuf = __builtin_shufflevector(sum, sum, 1, 1, 1, 1);
 	dot = sum + shuf;
 	len_sq = __builtin_shufflevector(dot, dot, 0, 0, 0, 0);
-	return ((t_vec4){.v = vec.v * __builtin_ia32_rsqrtps(len_sq)});
+	approx = __builtin_ia32_rsqrtps(len_sq);
+	newton = approx * (1.5f - 0.5f * len_sq * approx * approx);
+	return ((t_vec4){.v = vec.v * newton});
 }
 
 static inline float	vec4_len_sq(const t_vec4 vec)

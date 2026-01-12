@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:44:58 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 19:58:48 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/12 20:12:26 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static inline t_vec4	shade_ray(const t_scene *scn, const t_ray *r, const t_hit *
 	light_dir = vec4_scale(light_vec, 1.0f / light_dist);
 	shadow_ray = ray_create(vec4_add(rec->p, vec4_scale(rec->normal, EPSILON)),
 			light_dir);
-	if (hit_world_any(scn, &shadow_ray, light_dist))
+	if (hit_world_any(scn, &shadow_ray, light_dist - EPSILON))
 		return (ambient);
 	diff_strength = fmax_fast(vec4_dot(rec->normal, light_dir), 0.0f);
 	diffuse = vec4_mul(scn->light.color, rec->color_obj);
