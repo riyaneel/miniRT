@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:44:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 19:55:11 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/14 16:38:22 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ static inline bool	hit_world(const t_scene *scn, const t_ray *r,
 	i = 0;
 	while (i < scn->num_cylinders)
 	{
-		if (hit_cylinder(&scn->cylinders[i], r, t_min,
-				closest_so_far, &temp_rec))
+		if (hit_cylinder(&scn->cylinders[i], r,
+				vec_init(t_min, closest_so_far, 0, 0), &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;
@@ -91,7 +91,8 @@ static inline bool	hit_world_any(const t_scene *scn, const t_ray *r,
 	i = 0;
 	while (i < scn->num_cylinders)
 	{
-		if (hit_cylinder(&scn->cylinders[i], r, t_min, t_max, &temp_rec))
+		if (hit_cylinder(&scn->cylinders[i], r,
+				vec_init(t_min, t_max, 0, 0), &temp_rec))
 			return (true);
 		i++;
 	}
