@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 20:22:21 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/14 14:30:03 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,20 @@ static inline t_vec4	vec4_cross(const t_vec4 a, const t_vec4 b)
 
 static inline t_vec4	vec4_normalize(const t_vec4 vec)
 {
-	const t_v4sf	mul = vec.v * vec.v;
-	t_v4sf			shuf;
-	t_v4sf			sum;
-	t_v4sf			dot;
-	t_v4sf			len_sq;
-	t_v4sf			approx;
-	t_v4sf			newton;
+	t_v4sf	work;
+	t_v4sf	shuf;
+	t_v4sf	len_sq;
+	t_v4sf	inv;
 
-	shuf = __builtin_shufflevector(mul, mul, 2, 3, 2, 3);
-	sum = mul + shuf;
-	shuf = __builtin_shufflevector(sum, sum, 1, 1, 1, 1);
-	dot = sum + shuf;
-	len_sq = __builtin_shufflevector(dot, dot, 0, 0, 0, 0);
-	approx = __builtin_ia32_rsqrtps(len_sq);
-	newton = approx * (1.5f - 0.5f * len_sq * approx * approx);
-	return ((t_vec4){.v = vec.v * newton});
+	work = vec.v * vec.v;
+	shuf = __builtin_shufflevector(work, work, 2, 3, 2, 3);
+	work += shuf;
+	shuf = __builtin_shufflevector(work, work, 1, 1, 1, 1);
+	work += shuf;
+	len_sq = __builtin_shufflevector(work, work, 0, 0, 0, 0);
+	inv = __builtin_ia32_rsqrtps(len_sq);
+	inv = inv * (1.5f - 0.5f * len_sq * inv * inv);
+	return ((t_vec4){.v = vec.v * inv});
 }
 
 static inline float	vec4_len_sq(const t_vec4 vec)
