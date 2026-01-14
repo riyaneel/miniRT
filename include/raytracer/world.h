@@ -6,96 +6,89 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:44:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/14 16:38:22 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/14 18:02:26 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WORLD_H
 # define WORLD_H
 
-# include "raytracer/intersections.h"
-# include "raytracer/intersections_cylinder.h"
-# include "scene/scene_types.h"
+# include "world_utils.h"
 
-static inline bool	hit_world(const t_scene *scn, const t_ray *r,
-		float t_min, float t_max, t_hit *rec)
+static inline bool	shadow_spheres(const t_scene *scn, const t_ray *r,
+		const t_vec4 bounds)
 {
-	t_hit	temp_rec;
-	bool	hit_anything;
-	float	closest_so_far;
+	t_hit	tmp;
 	int		i;
 
-	hit_anything = false;
-	closest_so_far = t_max;
 	i = 0;
 	while (i < scn->num_spheres)
 	{
-		if (hit_sphere(&scn->spheres[i], r, t_min, closest_so_far, &temp_rec))
-		{
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			*rec = temp_rec;
-			rec->color_obj = scn->spheres[i].color;
-		}
+		if (hit_sphere(&scn->spheres[i], r, bounds, &tmp))
+			return (true);
 		i++;
 	}
+	return (false);
+}
+
+static inline bool	shadow_planes(const t_scene *scn, const t_ray *r,
+		const t_vec4 bounds)
+{
+	t_hit	tmp;
+	int		i;
+
 	i = 0;
 	while (i < scn->num_planes)
 	{
-		if (hit_plane(&scn->planes[i], r, t_min, closest_so_far, &temp_rec))
-		{
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			*rec = temp_rec;
-			rec->color_obj = scn->planes[i].color;
-		}
+		if (hit_plane(&scn->planes[i], r, bounds, &tmp))
+			return (true);
 		i++;
 	}
+	return (false);
+}
+
+static inline bool	shadow_cylinders(const t_scene *scn, const t_ray *r,
+		const t_vec4 bounds)
+{
+	t_hit	tmp;
+	int		i;
+
 	i = 0;
 	while (i < scn->num_cylinders)
 	{
-		if (hit_cylinder(&scn->cylinders[i], r,
-				vec_init(t_min, closest_so_far, 0, 0), &temp_rec))
-		{
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			*rec = temp_rec;
-			rec->color_obj = scn->cylinders[i].color;
-		}
+		if (hit_cylinder(&scn->cylinders[i], r, bounds, &tmp))
+			return (true);
 		i++;
 	}
-	return (hit_anything);
+	return (false);
+}
+
+static inline bool	hit_world(const t_scene *scn, const t_ray *r,
+		t_vec4 bounds, t_hit *rec)
+{
+	bool	hit;
+
+	hit = false;
+	if (check_spheres(scn, r, &bounds, rec))
+		hit = true;
+	if (check_planes(scn, r, &bounds, rec))
+		hit = true;
+	if (check_cylinders(scn, r, &bounds, rec))
+		hit = true;
+	return (hit);
 }
 
 static inline bool	hit_world_any(const t_scene *scn, const t_ray *r,
-		float t_max)
+		const float t_max)
 {
-	const float	t_min = EPSILON;
-	t_hit		temp_rec;
-	int			i;
+	const t_vec4	bounds = {EPSILON, t_max, 0, 0};
 
-	i = 0;
-	while (i < scn->num_spheres)
-	{
-		if (hit_sphere(&scn->spheres[i], r, t_min, t_max, &temp_rec))
-			return (true);
-		i++;
-	}
-	i = 0;
-	while (i < scn->num_planes)
-	{
-		if (hit_plane(&scn->planes[i], r, t_min, t_max, &temp_rec))
-			return (true);
-		i++;
-	}
-	i = 0;
-	while (i < scn->num_cylinders)
-	{
-		if (hit_cylinder(&scn->cylinders[i], r,
-				vec_init(t_min, t_max, 0, 0), &temp_rec))
-			return (true);
-		i++;
-	}
+	if (shadow_spheres(scn, r, bounds))
+		return (true);
+	if (shadow_planes(scn, r, bounds))
+		return (true);
+	if (shadow_cylinders(scn, r, bounds))
+		return (true);
 	return (false);
 }
 

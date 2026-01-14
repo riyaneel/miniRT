@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 00:18:38 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 20:19:41 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/14 17:54:30 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # define EPSILON 0.001f
 
 static inline bool	hit_sphere(const t_sphere *sp, const t_ray *ray,
-		const float t_min, const float t_max, t_hit *rec)
+		const t_vec4 bounds, t_hit *rec)
 {
 	t_vec4	oc;
 	float	half_b;
@@ -36,10 +36,10 @@ static inline bool	hit_sphere(const t_sphere *sp, const t_ray *ray,
 		return (false);
 	sqrtd = sqrtf(discriminant);
 	root = -half_b - sqrtd;
-	if (root <= t_min || root >= t_max)
+	if (root <= bounds.x || root >= bounds.y)
 	{
 		root = -half_b + sqrtd;
-		if (root <= t_min || root >= t_max)
+		if (root <= bounds.x || root >= bounds.y)
 			return (false);
 	}
 	rec->t = root;
@@ -50,7 +50,7 @@ static inline bool	hit_sphere(const t_sphere *sp, const t_ray *ray,
 }
 
 static inline bool	hit_plane(const t_plane *pl, const t_ray *ray,
-		const float t_min, const float t_max, t_hit *rec)
+		const t_vec4 bounds, t_hit *rec)
 {
 	float	denom;
 	float	t;
@@ -61,7 +61,7 @@ static inline bool	hit_plane(const t_plane *pl, const t_ray *ray,
 		return (false);
 	po = vec4_sub(pl->point, ray->origin);
 	t = vec4_dot(po, pl->normal) / denom;
-	if (t < t_min || t > t_max)
+	if (t < bounds.x || t > bounds.y)
 		return (false);
 	rec->t = t;
 	rec->p = ray_at(ray, t);
