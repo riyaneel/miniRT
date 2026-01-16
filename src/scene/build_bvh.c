@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:58:32 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 11:48:07 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 12:15:07 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,28 @@ static int	partition(t_triangle *t, const int count, const int axis,
 	return (i);
 }
 
+static int	get_split_mid(const t_mesh *m, t_bvh_node *n, const int start)
+{
+	t_vec4	sz;
+	int		ax;
+	int		mid;
+
+	sz = vec4_sub(n->bounds.max, n->bounds.min);
+	ax = (sz.y > sz.x);
+	if (sz.z > ((float *)&sz)[ax])
+		ax = 2;
+	mid = partition(&m->tris[start], n->tri_count, ax,
+			((float *)&n->bounds.min)[ax] + ((float *)&sz)[ax] * 0.5f);
+	if (mid == 0 || mid == n->tri_count)
+		return (n->tri_count / 2);
+	return (mid);
+}
+
 static void	split(t_mesh *m, const int idx, const int start, int *pool)
 {
 	t_bvh_node	*n;
-	t_vec4		sz;
-	int			ax;
 	int			mid;
+	int			count;
 
 	n = &m->bvh_nodes[idx];
 	n->bounds = get_bounds(&m->tris[start], n->tri_count);
@@ -75,19 +91,13 @@ static void	split(t_mesh *m, const int idx, const int start, int *pool)
 		n->first_tri_idx = start;
 		return ;
 	}
-	sz = vec4_sub(n->bounds.max, n->bounds.min);
-	ax = (sz.y > sz.x);
-	if (sz.z > ((float *)&sz)[ax])
-		ax = 2;
-	mid = partition(&m->tris[start], n->tri_count, ax,
-			((float *)&n->bounds.min)[ax] + ((float *)&sz)[ax] * 0.5f);
-	if (mid == 0 || mid == n->tri_count)
-		mid = n->tri_count / 2;
+	mid = get_split_mid(m, n, start);
+	count = n->tri_count;
 	n->left_child = *pool;
 	*pool += 2;
 	m->bvh_nodes[n->left_child].tri_count = mid;
 	split(m, n->left_child, start, pool);
-	m->bvh_nodes[n->left_child + 1].tri_count = n->tri_count - mid;
+	m->bvh_nodes[n->left_child + 1].tri_count = count - mid;
 	split(m, n->left_child + 1, start + mid, pool);
 	n->tri_count = 0;
 }
