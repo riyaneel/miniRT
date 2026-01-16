@@ -6,13 +6,14 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:43:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 08:16:52 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 10:59:16 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SCENE_PARSER_H
 # define SCENE_PARSER_H
 
+# include "mesh_types.h"
 # include "scene_types.h"
 # include "allocator/arena_allocator.h"
 
@@ -29,6 +30,10 @@ void	parse_sphere(const t_scene *scn, int *idx, char **p);
 void	parse_plane(const t_scene *scn, int *idx, char **p);
 
 void	parse_cylinder(t_scene *scn, int *idx, char **p);
+
+t_mesh	*parse_obj(t_arena *arena, const char *filename);
+
+void	build_bvh(t_mesh *mesh, t_arena *arena);
 
 char	*read_file_to_arena(t_arena *arena, const char *file);
 
