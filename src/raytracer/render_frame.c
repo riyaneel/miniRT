@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:47:03 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/14 18:32:10 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/14 22:49:42 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static t_vec4	render_pixel(const t_scene *scn, const int x, const int y,
 	return (vec4_scale(final_color, 1.0f / (float)SAMPLES_PER_PIXEL));
 }
 
+__attribute__((noinline))
 void	render_frame(const t_graphics *gfx)
 {
 	int		x;
