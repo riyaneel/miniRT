@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:43:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 10:59:16 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 12:33:14 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ void	parse_cylinder(t_scene *scn, int *idx, char **p);
 t_mesh	*parse_obj(t_arena *arena, const char *filename);
 
 void	build_bvh(t_mesh *mesh, t_arena *arena);
+
+void	obj_get_counts(const char *p, int *v_cnt, int *f_cnt);
+
+void	obj_parse_faces(const char *p, t_mesh *m, const t_vec4 *v,
+			int *ti);
 
 char	*read_file_to_arena(t_arena *arena, const char *file);
 
