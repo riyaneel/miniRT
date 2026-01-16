@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:44:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 11:50:02 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 19:16:14 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ static inline bool	hit_world(const t_scene *scn, const t_ray *r,
 	{
 		hit = true;
 		bounds.y = rec->t;
+		rec->color_obj = scn->mesh->color;
 	}
 	return (hit);
 }

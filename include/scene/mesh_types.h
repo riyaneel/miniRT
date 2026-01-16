@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:31:09 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 10:59:12 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 19:15:41 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_mesh {
 	t_triangle	*tris;
 	t_bvh_node	*bvh_nodes;
 	t_aabb		bounds;
+	t_vec4		color;
 	int			num_tris;
 	int			num_nodes;
 	long		padding;

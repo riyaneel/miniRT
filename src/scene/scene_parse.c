@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:05:33 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 11:49:53 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 19:17:34 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,14 @@ static void	load_mesh_resource(t_scene *scn, t_arena *arena, char *p)
 			printf("[Mesh] Loading '%s'...\n", path);
 			scn->mesh = parse_obj(arena, path);
 			if (scn->mesh)
+			{
+				skip_formatting(&p);
+				if (*p && *p != '\n')
+					scn->mesh->color = parse_color(&p);
+				else
+					scn->mesh->color = (t_vec4){{1.0f, 0.0f, 1.0f, 1.0f}};
 				build_bvh(scn->mesh, arena);
+			}
 			return ;
 		}
 		while (*p && *p != '\n')
