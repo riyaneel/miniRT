@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 10:56:24 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 11:49:01 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 12:12:14 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,64 +17,94 @@
 # include "scene/mesh_types.h"
 # include "utils/maths_utils.h"
 
+typedef struct s_aabb_ctx
+{
+	t_vec4	inv;
+	t_vec4	t[2];
+	t_vec4	bounds[2];
+	float	limits[2];
+	long	padding;
+}	t_aabb_ctx;
+
 static inline bool	intersect_aabb(const t_ray *r, const t_aabb *b,
 		const float t_max)
 {
-	const t_vec4	inv = vec4_div((t_vec4){{1, 1, 1, 1}}, r->dir);
-	const t_vec4	t0 = vec4_mul(vec4_sub(b->min, r->origin), inv);
-	const t_vec4	t1 = vec4_mul(vec4_sub(b->max, r->origin), inv);
-	const t_vec4	t_min = vec4_min(t0, t1);
-	const t_vec4	t_max_v = vec4_max(t0, t1);
-	const float		tin = fmax_fast(t_min.x, fmax_fast(t_min.y, t_min.z));
-	const float		tout = fmin_fast(t_max_v.x, fmin_fast(t_max_v.y, t_max_v.z));
+	t_aabb_ctx	d;
 
-	return (tout >= tin && tin < t_max && tout > 0);
+	d.inv = vec4_div((t_vec4){{1, 1, 1, 1}}, r->dir);
+	d.t[0] = vec4_mul(vec4_sub(b->min, r->origin), d.inv);
+	d.t[1] = vec4_mul(vec4_sub(b->max, r->origin), d.inv);
+	d.bounds[0] = vec4_min(d.t[0], d.t[1]);
+	d.bounds[1] = vec4_max(d.t[0], d.t[1]);
+	d.limits[0] = fmax_fast(d.bounds[0].x,
+			fmax_fast(d.bounds[0].y, d.bounds[0].z));
+	d.limits[1] = fmin_fast(d.bounds[1].x,
+			fmin_fast(d.bounds[1].y, d.bounds[1].z));
+	return (d.limits[1] >= d.limits[0]
+		&& d.limits[0] < t_max && d.limits[1] > 0);
 }
+
+typedef struct s_tri_ctx
+{
+	t_vec4	pvec;
+	t_vec4	tvec;
+	t_vec4	qvec;
+	float	det;
+	float	inv;
+	long	padding;
+}	t_tri_ctx;
 
 static inline bool	intersect_tri(const t_ray *r, const t_triangle *tr,
 		t_hit *rec, const float t_max)
 {
-	const t_vec4	pvec = vec4_cross(r->dir, tr->e2);
-	const float		det = vec4_dot(tr->e1, pvec);
-	float			inv_det;
-	t_vec4			tvec;
-	t_vec4			qvec;
-	float			u;
-	float			v;
-	float			t;
+	t_tri_ctx	d;
+	float		uvt[3];
 
-	if (fabsf(det) < 0.000001f)
+	d.pvec = vec4_cross(r->dir, tr->e2);
+	d.det = vec4_dot(tr->e1, d.pvec);
+	if (fabsf(d.det) < 0.000001f)
 		return (false);
-	inv_det = 1.0f / det;
-	tvec = vec4_sub(r->origin, tr->v0);
-	u = vec4_dot(tvec, pvec) * inv_det;
-	if (u < 0.0f || u > 1.0f)
+	d.inv = 1.0f / d.det;
+	d.tvec = vec4_sub(r->origin, tr->v0);
+	uvt[0] = vec4_dot(d.tvec, d.pvec) * d.inv;
+	if (uvt[0] < 0.0f || uvt[0] > 1.0f)
 		return (false);
-	qvec = vec4_cross(tvec, tr->e1);
-	v = vec4_dot(r->dir, qvec) * inv_det;
-	if (v < 0.0f || u + v > 1.0f)
+	d.qvec = vec4_cross(d.tvec, tr->e1);
+	uvt[1] = vec4_dot(r->dir, d.qvec) * d.inv;
+	if (uvt[1] < 0.0f || uvt[0] + uvt[1] > 1.0f)
 		return (false);
-	t = vec4_dot(tr->e2, qvec) * inv_det;
-	if (t < EPSILON || t > t_max)
+	uvt[2] = vec4_dot(tr->e2, d.qvec) * d.inv;
+	if (uvt[2] < EPSILON || uvt[2] > t_max)
 		return (false);
-	rec->t = t;
-	rec->p = ray_at(r, t);
+	rec->t = uvt[2];
+	rec->p = ray_at(r, uvt[2]);
 	rec->normal = tr->normal;
 	return (true);
+}
+
+static inline void	process_leaf(const t_mesh *m, int idx,
+		const t_ray *r, t_hit *rec)
+{
+	int		i;
+
+	i = 0;
+	while (i < m->bvh_nodes[idx].tri_count)
+	{
+		intersect_tri(r, &m->tris[m->bvh_nodes[idx].first_tri_idx + i],
+			rec, rec->t);
+		i++;
+	}
 }
 
 static inline bool	hit_bvh(const t_mesh *m, const t_ray *r,
 		t_hit *rec, const float t_max)
 {
-	int			stack[64];
-	int			sp;
-	int			idx;
-	bool		hit;
-	int			i;
+	int		stack[64];
+	int		sp;
+	int		idx;
 
 	sp = 0;
 	stack[sp++] = 0;
-	hit = false;
 	rec->t = t_max;
 	while (sp > 0)
 	{
@@ -82,23 +112,14 @@ static inline bool	hit_bvh(const t_mesh *m, const t_ray *r,
 		if (!intersect_aabb(r, &m->bvh_nodes[idx].bounds, rec->t))
 			continue ;
 		if (m->bvh_nodes[idx].tri_count > 0)
-		{
-			i = 0;
-			while (i < m->bvh_nodes[idx].tri_count)
-			{
-				if (intersect_tri(r, &m->tris[m->bvh_nodes[idx].first_tri_idx
-							+ i], rec, rec->t))
-					hit = true;
-				i++;
-			}
-		}
+			process_leaf(m, idx, r, rec);
 		else
 		{
 			stack[sp++] = m->bvh_nodes[idx].left_child + 1;
 			stack[sp++] = m->bvh_nodes[idx].left_child;
 		}
 	}
-	return (hit);
+	return (rec->t < t_max);
 }
 
 #endif // INTERSECTIONS_BVH_H
