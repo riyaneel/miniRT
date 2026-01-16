@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:41:25 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 00:17:30 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 10:58:48 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <stdbool.h>
 
+# include "mesh_types.h"
 # include "vectors/vector_types.h"
 
 typedef struct s_sphere {
@@ -68,13 +69,14 @@ typedef struct s_scene {
 	t_sphere	*spheres;
 	t_plane		*planes;
 	t_cylinder	*cylinders;
+	t_mesh		*mesh;
 	int			num_spheres;
 	int			num_planes;
 	int			num_cylinders;
 	bool		has_cam;
 	bool		has_amb;
 	bool		has_light;
-	char		reserved[9];
+	char		reserved;
 	t_camera	camera;
 	t_ambient	ambient;
 	t_light		light;
