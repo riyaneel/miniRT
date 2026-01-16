@@ -6,13 +6,14 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:44:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/14 18:02:26 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:50:02 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WORLD_H
 # define WORLD_H
 
+# include "intersections_bvh.h"
 # include "world_utils.h"
 
 static inline bool	shadow_spheres(const t_scene *scn, const t_ray *r,
@@ -75,6 +76,11 @@ static inline bool	hit_world(const t_scene *scn, const t_ray *r,
 		hit = true;
 	if (check_cylinders(scn, r, &bounds, rec))
 		hit = true;
+	if (scn->mesh && hit_bvh(scn->mesh, r, rec, bounds.y))
+	{
+		hit = true;
+		bounds.y = rec->t;
+	}
 	return (hit);
 }
 
@@ -82,6 +88,7 @@ static inline bool	hit_world_any(const t_scene *scn, const t_ray *r,
 		const float t_max)
 {
 	const t_vec4	bounds = {EPSILON, t_max, 0, 0};
+	t_hit			dummy_rec;
 
 	if (shadow_spheres(scn, r, bounds))
 		return (true);
@@ -89,6 +96,11 @@ static inline bool	hit_world_any(const t_scene *scn, const t_ray *r,
 		return (true);
 	if (shadow_cylinders(scn, r, bounds))
 		return (true);
+	if (scn->mesh)
+	{
+		if (hit_bvh(scn->mesh, r, &dummy_rec, t_max))
+			return (true);
+	}
 	return (false);
 }
 

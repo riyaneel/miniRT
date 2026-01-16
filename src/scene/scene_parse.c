@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/11 22:15:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 08:22:37 by rel-qoqu         ###   ########.fr       */
+/*   Created: 2026/01/16 09:05:33 by rel-qoqu          #+#    #+#             */
+/*   Updated: 2026/01/16 11:49:53 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "scene/scene_parser.h"
 
+#include "core/ctype/ft_ctype.h"
 #include "core/memory/ft_memory.h"
 
 static bool	alloc_arrays(t_arena *arena, t_scene *scn)
@@ -35,6 +36,35 @@ static bool	alloc_arrays(t_arena *arena, t_scene *scn)
 	return (true);
 }
 
+static void	load_mesh_resource(t_scene *scn, t_arena *arena, char *p)
+{
+	char	path[256];
+	int		i;
+
+	while (*p)
+	{
+		skip_formatting(&p);
+		if (p[0] == 'o' && p[1] == 'b' && p[2] == 'j' && ft_isspace(p[3]))
+		{
+			p += 3;
+			skip_formatting(&p);
+			i = 0;
+			while (*p && *p != '\n' && !ft_isspace(*p) && i < 255)
+				path[i++] = *p++;
+			path[i] = '\0';
+			printf("[Mesh] Loading '%s'...\n", path);
+			scn->mesh = parse_obj(arena, path);
+			if (scn->mesh)
+				build_bvh(scn->mesh, arena);
+			return ;
+		}
+		while (*p && *p != '\n')
+			p++;
+		if (*p)
+			p++;
+	}
+}
+
 static bool	validate_scene(const t_scene *scn)
 {
 	if (!scn->has_cam || !scn->has_amb || !scn->has_light)
@@ -42,6 +72,9 @@ static bool	validate_scene(const t_scene *scn)
 		printf("Error\nMissing mandatory scene elements (A, C, L).\n");
 		return (false);
 	}
+	if (scn->mesh)
+		printf("[Mesh] BVH Built: %d nodes for %d tris.\n",
+			scn->mesh->num_nodes, scn->mesh->num_tris);
 	return (true);
 }
 
@@ -64,6 +97,7 @@ t_scene	*scene_parse(t_arena *arena, const char *filename)
 	if (!alloc_arrays(arena, scn))
 		return (NULL);
 	fill_objects(scn, data);
+	load_mesh_resource(scn, arena, data);
 	if (!validate_scene(scn))
 		return (NULL);
 	printf("[Scene] Parsed OK: %d Sp, %d Pl, %d Cy\n",
