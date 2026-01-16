@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 13:43:27 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/14 14:30:03 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 10:11:26 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <float.h>
 
 # include "vector_base_ops.h"
+# include "vector_utils.h"
 
 static inline float	vec4_dot(const t_vec4 a, const t_vec4 b)
 {
