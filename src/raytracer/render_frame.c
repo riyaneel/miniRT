@@ -6,10 +6,11 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:47:03 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 08:42:08 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 19:09:33 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -58,10 +59,7 @@ static void	*thread_routine(void *arg)
 	ctx = (t_render_ctx *)arg;
 	while (1)
 	{
-		pthread_mutex_lock(&ctx->mutex);
-		tile_idx = ctx->next_tile;
-		ctx->next_tile++;
-		pthread_mutex_unlock(&ctx->mutex);
+		tile_idx = __atomic_fetch_add(&ctx->next_tile, 1, __ATOMIC_RELAXED);
 		if (tile_idx >= ctx->total_tiles)
 			break ;
 		render_tile(ctx, tile_idx);
@@ -76,7 +74,6 @@ static void	init_ctx(t_render_ctx *ctx, t_graphics *gfx)
 	ctx->tiles_x = (gfx->width + RT_TILE_SIZE - 1) / RT_TILE_SIZE;
 	ctx->tiles_y = (gfx->height + RT_TILE_SIZE - 1) / RT_TILE_SIZE;
 	ctx->total_tiles = ctx->tiles_x * ctx->tiles_y;
-	pthread_mutex_init(&ctx->mutex, NULL);
 }
 
 void	render_frame(const t_graphics *gfx)
@@ -101,5 +98,4 @@ void	render_frame(const t_graphics *gfx)
 	while (--i >= 0)
 		pthread_join(th[i], NULL);
 	free(th);
-	pthread_mutex_destroy(&ctx.mutex);
 }

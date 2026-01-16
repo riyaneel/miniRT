@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 08:38:46 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 08:40:06 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 19:10:22 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@
 #include "raytracer/world.h"
 #include "utils/random_utils.h"
 
-#define SAMPLES_PER_PIXEL 10
+#ifndef SAMPLES_PER_PIXEL
+# define SAMPLES_PER_PIXEL 16
+#endif // SAMPLES_PER_PIXEL
 
 static t_ray	get_sample_ray(const t_camera *cam, const int x, const int y,
 		t_prng_state *rng)

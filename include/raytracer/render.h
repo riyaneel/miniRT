@@ -6,14 +6,12 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:46:13 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 08:38:08 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 19:08:53 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RENDER_H
 # define RENDER_H
-
-# include <pthread.h>
 
 # include "graphics/graphics.h"
 
@@ -21,7 +19,6 @@
 
 typedef struct s_render_ctx {
 	t_graphics		*gfx;
-	pthread_mutex_t	mutex;
 	int				next_tile;
 	int				total_tiles;
 	int				tiles_x;
