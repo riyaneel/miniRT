@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/01/16 09:59:22 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/01/16 11:57:26 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,7 +57,7 @@ LTO_FLAGS			:= -flto
 SAN_FLAGS			:= -fsanitize=address,undefined
 
 C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
-						$(INCLUDE_FLAGS) -std=c11 -march=native
+						$(INCLUDE_FLAGS) -std=c11 -march=native -msse2
 LD_LIBS				:= $(LIBFT_FLAGS) -L$(MLX_DIR) -lmlx -lX11 -lGL -lm
 
 C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
