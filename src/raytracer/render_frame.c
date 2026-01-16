@@ -6,73 +6,100 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:47:03 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/14 22:49:42 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/16 08:42:08 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <float.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "raytracer/camera.h"
 #include "raytracer/render.h"
-#include "raytracer/shader.h"
-#include "raytracer/world.h"
+#include "utils/maths_utils.h"
 #include "utils/random_utils.h"
 
-#define SAMPLES_PER_PIXEL 10
-
-static t_ray	get_sample_ray(const t_camera *cam, const int x, const int y,
-		t_prng_state *rng)
+static void	render_line(const t_render_ctx *ctx, const int y, int x,
+		const int limit_x)
 {
-	float	u;
-	float	v;
+	int	idx;
 
-	u = (float)x + 0.5f + (random_float(rng) - 0.5f);
-	v = (float)y + 0.5f + (random_float(rng) - 0.5f);
-	return (camera_get_ray(cam, u, v));
-}
-
-static t_vec4	render_pixel(const t_scene *scn, const int x, const int y,
-		const uint32_t seed)
-{
-	t_vec4			final_color;
-	t_prng_state	rng;
-	t_ray			r;
-	t_hit			rec;
-	int				s;
-
-	final_color = (t_vec4){{0, 0, 0, 0}};
-	rng = init_rng_seed((uint32_t)x, (uint32_t)y, seed);
-	s = 0;
-	while (s < SAMPLES_PER_PIXEL)
+	while (x < limit_x)
 	{
-		r = get_sample_ray(&scn->camera, x, y, &rng);
-		if (hit_world(scn, &r, vec_init(0.001f, FLT_MAX, 0, 0), &rec))
-			final_color = vec4_add(final_color, shade_ray(scn, &r, &rec));
-		s++;
+		idx = y * ctx->gfx->width + x;
+		ctx->gfx->framebuffer->pixels[idx] = \
+			render_pixel(ctx->gfx->scene, x, y, 1);
+		x++;
 	}
-	return (vec4_scale(final_color, 1.0f / (float)SAMPLES_PER_PIXEL));
 }
 
-__attribute__((noinline))
-void	render_frame(const t_graphics *gfx)
+static void	render_tile(const t_render_ctx *ctx, const int tile_idx)
 {
-	int		x;
-	int		y;
-	t_vec4	color;
-	int		idx;
+	int	x;
+	int	y;
+	int	lim_x;
+	int	lim_y;
 
-	camera_init_viewport(&gfx->scene->camera, gfx->width, gfx->height);
-	y = 0;
-	while (y < gfx->height)
+	x = (tile_idx % ctx->tiles_x) * RT_TILE_SIZE;
+	y = (tile_idx / ctx->tiles_x) * RT_TILE_SIZE;
+	lim_x = (int)fmin_fast((float)x + RT_TILE_SIZE, (float)ctx->gfx->width);
+	lim_y = (int)fmin_fast((float)y + RT_TILE_SIZE, (float)ctx->gfx->height);
+	while (y < lim_y)
 	{
-		x = 0;
-		while (x < gfx->width)
-		{
-			color = render_pixel(gfx->scene, x, y, 1);
-			idx = y * gfx->width + x;
-			gfx->framebuffer->pixels[idx] = color;
-			x++;
-		}
+		render_line(ctx, y, x, lim_x);
 		y++;
 	}
+}
+
+static void	*thread_routine(void *arg)
+{
+	t_render_ctx	*ctx;
+	int				tile_idx;
+
+	ctx = (t_render_ctx *)arg;
+	while (1)
+	{
+		pthread_mutex_lock(&ctx->mutex);
+		tile_idx = ctx->next_tile;
+		ctx->next_tile++;
+		pthread_mutex_unlock(&ctx->mutex);
+		if (tile_idx >= ctx->total_tiles)
+			break ;
+		render_tile(ctx, tile_idx);
+	}
+	return (NULL);
+}
+
+static void	init_ctx(t_render_ctx *ctx, t_graphics *gfx)
+{
+	ctx->gfx = gfx;
+	ctx->next_tile = 0;
+	ctx->tiles_x = (gfx->width + RT_TILE_SIZE - 1) / RT_TILE_SIZE;
+	ctx->tiles_y = (gfx->height + RT_TILE_SIZE - 1) / RT_TILE_SIZE;
+	ctx->total_tiles = ctx->tiles_x * ctx->tiles_y;
+	pthread_mutex_init(&ctx->mutex, NULL);
+}
+
+void	render_frame(const t_graphics *gfx)
+{
+	t_render_ctx	ctx;
+	pthread_t		*th;
+	long			n;
+	int				i;
+
+	n = sysconf(_SC_NPROCESSORS_ONLN);
+	if (n < 1)
+		n = 1;
+	th = malloc(sizeof(pthread_t) * (size_t)n);
+	if (!th)
+		return ;
+	init_ctx(&ctx, (t_graphics *)(uintptr_t)gfx);
+	camera_init_viewport(&gfx->scene->camera, gfx->width, gfx->height);
+	i = -1;
+	while (++i < n)
+		if (pthread_create(&th[i], NULL, thread_routine, &ctx) != 0)
+			break ;
+	while (--i >= 0)
+		pthread_join(th[i], NULL);
+	free(th);
+	pthread_mutex_destroy(&ctx.mutex);
 }
