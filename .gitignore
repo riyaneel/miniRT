@@ -45,3 +45,4 @@ build/
 miniRT
 miniRT_debug
 miniRT_sanitized
+!/assets/*.obj
