@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:44:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 19:16:14 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/17 12:36:33 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,10 @@ static inline bool	hit_world(const t_scene *scn, const t_ray *r,
 		hit = true;
 	if (check_cylinders(scn, r, &bounds, rec))
 		hit = true;
-	if (scn->mesh && hit_bvh(scn->mesh, r, rec, bounds.y))
+	if (scn->num_meshes > 0)
 	{
-		hit = true;
-		bounds.y = rec->t;
-		rec->color_obj = scn->mesh->color;
+		if (check_meshes(scn, r, &bounds, rec))
+			hit = true;
 	}
 	return (hit);
 }
@@ -90,6 +89,7 @@ static inline bool	hit_world_any(const t_scene *scn, const t_ray *r,
 {
 	const t_vec4	bounds = {EPSILON, t_max, 0, 0};
 	t_hit			dummy_rec;
+	int				i;
 
 	if (shadow_spheres(scn, r, bounds))
 		return (true);
@@ -97,10 +97,15 @@ static inline bool	hit_world_any(const t_scene *scn, const t_ray *r,
 		return (true);
 	if (shadow_cylinders(scn, r, bounds))
 		return (true);
-	if (scn->mesh)
+	if (scn->num_meshes > 0)
 	{
-		if (hit_bvh(scn->mesh, r, &dummy_rec, t_max))
-			return (true);
+		i = 0;
+		while (i < scn->num_meshes)
+		{
+			if (hit_bvh(&scn->meshes[i], r, &dummy_rec, t_max))
+				return (true);
+			i++;
+		}
 	}
 	return (false);
 }

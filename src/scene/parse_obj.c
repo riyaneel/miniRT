@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:48:30 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 12:36:23 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/17 13:44:29 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,20 @@ t_mesh	*parse_obj(t_arena *arena, const char *filename)
 	parse_data(d, m, vs, c);
 	normalize_mesh(m);
 	return (m);
+}
+
+void	mesh_apply_transform(const t_mesh *m, const t_vec4 pos,
+			const float scale)
+{
+	int	i;
+
+	i = 0;
+	while (i < m->num_tris)
+	{
+		m->tris[i].v0 = vec4_scale(m->tris[i].v0, scale);
+		m->tris[i].e1 = vec4_scale(m->tris[i].e1, scale);
+		m->tris[i].e2 = vec4_scale(m->tris[i].e2, scale);
+		m->tris[i].v0 = vec4_add(m->tris[i].v0, pos);
+		i++;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:31:09 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 19:15:41 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/17 14:28:03 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ typedef struct s_triangle {
 	t_vec4	v0;
 	t_vec4	e1;
 	t_vec4	e2;
-	t_vec4	normal;
+	t_vec4	geo_normal;
 } __attribute__((aligned(16)))	t_triangle;
 
 typedef struct s_aabb {

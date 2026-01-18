@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 12:23:18 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 12:33:30 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/17 13:02:50 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static void	add_tri(const t_mesh *m, int *ti, const t_vec4 *v, const int *idx)
 	t->v0 = v[idx[0]];
 	t->e1 = vec4_sub(v[idx[1]], v[idx[0]]);
 	t->e2 = vec4_sub(v[idx[2]], v[idx[0]]);
-	t->normal = vec4_normalize(vec4_cross(t->e1, t->e2));
+	t->geo_normal = vec4_normalize(vec4_cross(t->e1, t->e2));
 }
 
 void	obj_parse_faces(const char *p, t_mesh *m, const t_vec4 *v, int *ti)

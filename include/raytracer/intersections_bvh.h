@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 10:56:24 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 12:12:14 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/17 13:43:59 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static inline bool	intersect_tri(const t_ray *r, const t_triangle *tr,
 		return (false);
 	rec->t = uvt[2];
 	rec->p = ray_at(r, uvt[2]);
-	rec->normal = tr->normal;
+	rec->normal = tr->geo_normal;
 	return (true);
 }
 

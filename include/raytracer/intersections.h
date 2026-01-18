@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 00:18:38 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/14 17:54:30 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/18 02:47:00 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include "ray.h"
 # include "scene/scene_types.h"
 
-# define EPSILON 0.001f
+# define EPSILON 0.00001f
 
 static inline bool	hit_sphere(const t_sphere *sp, const t_ray *ray,
 		const t_vec4 bounds, t_hit *rec)

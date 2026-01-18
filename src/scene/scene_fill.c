@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 08:18:48 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 08:20:52 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/17 12:31:10 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	count_objects(t_scene *scn, char *data)
 			scn->num_planes++;
 		else if (!ft_strncmp(p, "cy", 2) && ft_isspace(p[2]))
 			scn->num_cylinders++;
+		else if (!ft_strncmp(p, "obj", 3) && ft_isspace(p[3]))
+			scn->num_meshes++;
 		while (*p && *p != '\n')
 			p++;
 		if (*p == '\n')
