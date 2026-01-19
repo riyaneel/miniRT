@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:47:03 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 19:09:33 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/19 01:17:48 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "raytracer/camera.h"
 #include "raytracer/render.h"
 #include "utils/maths_utils.h"
-#include "utils/random_utils.h"
 
 static void	render_line(const t_render_ctx *ctx, const int y, int x,
 		const int limit_x)
@@ -76,7 +75,8 @@ static void	init_ctx(t_render_ctx *ctx, t_graphics *gfx)
 	ctx->total_tiles = ctx->tiles_x * ctx->tiles_y;
 }
 
-void	render_frame(const t_graphics *gfx)
+__attribute__((noinline))
+void	render_frame(t_graphics *gfx)
 {
 	t_render_ctx	ctx;
 	pthread_t		*th;
@@ -89,7 +89,7 @@ void	render_frame(const t_graphics *gfx)
 	th = malloc(sizeof(pthread_t) * (size_t)n);
 	if (!th)
 		return ;
-	init_ctx(&ctx, (t_graphics *)(uintptr_t)gfx);
+	init_ctx(&ctx, gfx);
 	camera_init_viewport(&gfx->scene->camera, gfx->width, gfx->height);
 	i = -1;
 	while (++i < n)

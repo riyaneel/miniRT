@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:46:13 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 19:08:53 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/19 01:17:28 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ typedef struct s_render_ctx {
 	int				tiles_y;
 }	t_render_ctx;
 
-void	render_frame(const t_graphics *gfx);
+void	render_frame(t_graphics *gfx);
 
 t_vec4	render_pixel(const t_scene *scn, int x, int y, uint32_t seed);
 
