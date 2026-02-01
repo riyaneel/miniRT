@@ -6,13 +6,15 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 08:18:48 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/19 01:29:32 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 12:59:42 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core/ctype/ft_ctype.h"
 #include "core/string/ft_string.h"
+#include "io/ft_printf.h"
 #include "scene/scene_parser.h"
+#include "scene/scene_validate.h"
 #include "vectors/rt_vectors.h"
 
 void	count_objects(t_scene *scn, char *data)
@@ -40,40 +42,82 @@ void	count_objects(t_scene *scn, char *data)
 	}
 }
 
-static void	parse_global(t_scene *scn, char **p)
+static bool	parse_ambient(t_scene *scn, char **p)
 {
-	if (**p == 'A' && ft_isspace((*p)[1]))
+	if (scn->has_amb)
 	{
-		(*p)++;
-		scn->ambient.ratio = parse_float(p);
-		scn->ambient.color = vec4_scale(parse_color(p), scn->ambient.ratio);
-		scn->has_amb = true;
+		ft_dprintf(2, "Error\nAmbient light (A) already defined\n");
+		return (false);
 	}
-	else if (**p == 'C' && ft_isspace((*p)[1]))
-	{
-		(*p)++;
-		scn->camera.origin = parse_vec3(p, 1.0f);
-		scn->camera.dir = vec4_normalize(parse_vec3(p, 0.0f));
-		scn->camera.fov = parse_float(p);
-		scn->has_cam = true;
-	}
-	else if (**p == 'L' && ft_isspace((*p)[1]))
-	{
-		(*p)++;
-		scn->light.origin = parse_vec3(p, 1.0f);
-		scn->light.ratio = parse_float(p);
-		scn->light.color = parse_color(p);
-		scn->has_light = true;
-	}
+	(*p)++;
+	scn->ambient.ratio = parse_float(p);
+	if (!validate_ratio(scn->ambient.ratio, "Ambient"))
+		return (false);
+	scn->ambient.color = vec4_scale(parse_color(p), scn->ambient.ratio);
+	scn->has_amb = true;
+	return (true);
 }
 
-static void	process_line(t_scene *scn, char **p, int *counts)
+static bool	parse_camera(t_scene *scn, char **p)
 {
+	t_vec4	dir;
+
+	if (scn->has_cam)
+	{
+		ft_dprintf(2, "Error\nCamera (C) already defined\n");
+		return (false);
+	}
+	(*p)++;
+	scn->camera.origin = parse_vec3(p, 1.0f);
+	dir = parse_vec3(p, 0.0f);
+	if (!validate_normalized_vec(dir, "Camera direction"))
+		return (false);
+	scn->camera.dir = vec4_normalize(dir);
+	scn->camera.fov = parse_float(p);
+	if (!validate_fov(scn->camera.fov))
+		return (false);
+	scn->has_cam = true;
+	return (true);
+}
+
+static bool	parse_light(t_scene *scn, char **p)
+{
+	if (scn->has_light)
+	{
+		ft_dprintf(2, "Error\nLight (L) already defined\n");
+		return (false);
+	}
+	(*p)++;
+	scn->light.origin = parse_vec3(p, 1.0f);
+	scn->light.ratio = parse_float(p);
+	if (!validate_ratio(scn->light.ratio, "Light"))
+		return (false);
+	scn->light.color = parse_color(p);
+	scn->has_light = true;
+	return (true);
+}
+
+static bool	parse_global(t_scene *scn, char **p)
+{
+	if (**p == 'A' && ft_isspace((*p)[1]))
+		return (parse_ambient(scn, p));
+	if (**p == 'C' && ft_isspace((*p)[1]))
+		return (parse_camera(scn, p));
+	if (**p == 'L' && ft_isspace((*p)[1]))
+		return (parse_light(scn, p));
+	return (true);
+}
+
+static bool	process_line(t_scene *scn, char **p, int *counts)
+{
+	bool	success;
+
+	success = true;
 	skip_formatting(p);
 	if (!**p)
-		return ;
+		return (success);
 	if (**p == 'A' || **p == 'C' || **p == 'L')
-		parse_global(scn, p);
+		success = parse_global(scn, p);
 	else if (!ft_strncmp(*p, "sp", 2))
 		parse_sphere(scn, &counts[0], p);
 	else if (!ft_strncmp(*p, "pl", 2))
@@ -84,6 +128,7 @@ static void	process_line(t_scene *scn, char **p, int *counts)
 		(*p)++;
 	if (**p == '\n')
 		(*p)++;
+	return (success);
 }
 
 bool	fill_objects(t_scene *scn, char *data)
@@ -96,6 +141,9 @@ bool	fill_objects(t_scene *scn, char *data)
 	counts[2] = 0;
 	p = data;
 	while (*p)
-		process_line(scn, &p, counts);
+	{
+		if (!process_line(scn, &p, counts))
+			return (false);
+	}
 	return (true);
 }

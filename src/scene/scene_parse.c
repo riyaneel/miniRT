@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:05:33 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 12:38:56 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 12:56:29 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,8 @@ t_scene	*scene_parse(t_arena *arena, const char *filename)
 	count_objects(scn, data);
 	if (!alloc_arrays(arena, scn))
 		return (NULL);
-	fill_objects(scn, data);
+	if (!fill_objects(scn, data))
+		return (NULL);
 	load_meshes(scn, arena, data);
 	if (!validate_scene(scn))
 		return (NULL);
