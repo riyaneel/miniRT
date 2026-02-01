@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:27:39 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:16:58 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:03:36 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ typedef enum e_hit_type {
 	HIT_SPHERE = 1,
 	HIT_PLANE = 2,
 	HIT_CYLINDER = 3,
-	HIT_MESH = 4,
+	HIT_CONE = 4,
+	HIT_MESH = 5,
 }	t_hit_type;
 
 typedef struct s_hit_record {

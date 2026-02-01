@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 17:22:54 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:54:29 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:18:43 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,24 @@ static inline t_vec4	build_tangent(const t_vec4 axis)
 }
 
 static inline t_vec4	checker_cylinder(const t_hit *rec)
+{
+	t_vec4	local;
+	t_vec4	tangent;
+	t_vec4	bitangent;
+	float	h;
+	float	u;
+
+	local = vec4_sub(rec->p, rec->obj_center);
+	h = vec4_dot(local, rec->obj_axis);
+	tangent = build_tangent(rec->obj_axis);
+	bitangent = vec4_cross(rec->obj_axis, tangent);
+	u = atan2f(vec4_dot(local, bitangent), vec4_dot(local, tangent));
+	u = (u + (float)M_PI) / (2.0f * (float)M_PI);
+	return (checker_blend(rec->color_obj,
+			checker_pattern(u, h, CHECKER_SCALE_CYL)));
+}
+
+static inline t_vec4	checker_cone(const t_hit *rec)
 {
 	t_vec4	local;
 	t_vec4	tangent;

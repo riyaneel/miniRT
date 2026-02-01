@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:43:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:44:01 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:18:26 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	parse_sphere(const t_scene *scn, int *idx, char **p);
 void	parse_plane(const t_scene *scn, int *idx, char **p);
 
 void	parse_cylinder(t_scene *scn, int *idx, char **p);
+
+void	parse_cone(const t_scene *scn, int *idx, char **p);
 
 t_mesh	*parse_obj(t_arena *arena, const char *filename);
 

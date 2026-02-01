@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 13:21:51 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:43:14 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:18:13 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,9 @@ bool	alloc_arrays(t_arena *arena, t_scene *scn)
 	if (scn->num_cylinders)
 		scn->cylinders = arena_alloc_align(arena, sizeof(t_cylinder)
 				* (size_t)scn->num_cylinders, 16);
+	if (scn->num_cones)
+		scn->cones = arena_alloc_align(arena, sizeof(t_cone)
+				* (size_t)scn->num_cones, 16);
 	if (scn->num_meshes)
 		scn->meshes = arena_alloc_align(arena, sizeof(t_mesh)
 				* (size_t)scn->num_meshes, 16);
@@ -89,6 +92,7 @@ bool	alloc_arrays(t_arena *arena, t_scene *scn)
 				* (size_t)scn->num_lights, 16);
 	if ((scn->num_planes && !scn->planes)
 		|| (scn->num_cylinders && !scn->cylinders)
+		|| (scn->num_cones && !scn->cones)
 		|| (scn->num_meshes && !scn->meshes)
 		|| (scn->num_lights && !scn->lights))
 		return (false);

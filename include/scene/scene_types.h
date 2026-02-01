@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:41:25 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:41:06 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:02:17 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,16 @@ typedef struct s_cylinder {
 	float	padding[2];
 }	t_cylinder;
 
+typedef struct s_cone {
+	t_vec4	apex;
+	t_vec4	axis;
+	t_vec4	color;
+	float	tan2;
+	float	height;
+	float	radius;
+	float	padding;
+}	t_cone;
+
 typedef struct s_ambient {
 	t_vec4	color;
 	float	ratio;
@@ -72,15 +82,17 @@ typedef struct s_scene {
 	t_sphere	spheres;
 	t_plane		*planes;
 	t_cylinder	*cylinders;
+	t_cone		*cones;
 	t_mesh		*meshes;
 	t_light		*lights;
 	int			num_planes;
 	int			num_cylinders;
+	int			num_cones;
 	int			num_meshes;
 	int			num_lights;
 	bool		has_cam;
 	bool		has_amb;
-	uint8_t		padding[14];
+	uint8_t		padding[2];
 	t_camera	camera;
 	t_ambient	ambient;
 }	t_scene;
