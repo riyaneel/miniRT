@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 14:57:21 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/12 23:02:19 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 12:31:01 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 #include "allocator/arena_allocator.h"
 #include "core/rt_core.h"
-#include "core/memory/ft_memory.h"
 #include "graphics/graphics.h"
 #include "scene/scene_parser.h"
 
+#include "core/memory/ft_memory.h"
+#include "core/string/ft_string.h"
 #include "io/ft_printf.h"
 
 #define WIN_W 1920
@@ -34,6 +35,18 @@ static inline int	kill(const char *msg, t_arena *arena)
 	return (1);
 }
 
+__attribute__((always_inline))
+static inline void	check_file_extension(const char *filename)
+{
+	size_t	len;
+
+	len = ft_strlen(filename);
+	if (len < 4)
+		kill("Error\nFile must have .rt extension\n", NULL);
+	if (ft_strncmp(filename + len - 3, ".rt", 3) != 0)
+		kill("Error\nFile must have .rt extension\n", NULL);
+}
+
 int	main(const int argc, char **argv)
 {
 	t_arena		*arena;
@@ -43,6 +56,7 @@ int	main(const int argc, char **argv)
 	arena = NULL;
 	if (argc != 2)
 		return (kill("Error\nUsage: ./miniRT <scene_file.rt>", arena));
+	check_file_extension(argv[1]);
 	core_init();
 	arena = arena_create((t_arena_config){MEMORY_POOL_SIZE});
 	if (!arena)
