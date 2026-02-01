@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:47:03 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/19 01:45:46 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 16:07:32 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,74 +16,6 @@
 
 #include "raytracer/camera.h"
 #include "raytracer/render.h"
-#include "utils/maths_utils.h"
-
-static void	render_line_local(const t_render_ctx *ctx, t_vec4 *line_buffer,
-		const int y, int x, const int limit_x)
-{
-	int	local_x;
-
-	local_x = 0;
-	while (x < limit_x)
-	{
-		line_buffer[local_x] = render_pixel(ctx->gfx->scene, x, y, 1);
-		x++;
-		local_x++;
-	}
-}
-
-static void	render_tile(const t_render_ctx *ctx, const int tile_idx)
-{
-	t_vec4	local_buffer[RT_TILE_SIZE * RT_TILE_SIZE];
-	int		x_start;
-	int		y_start;
-	int		y;
-	int		lim_x;
-	int		lim_y;
-	int		w_span;
-	int		fb_idx;
-	int		local_idx;
-
-	x_start = (tile_idx % ctx->tiles_x) * RT_TILE_SIZE;
-	y_start = (tile_idx / ctx->tiles_x) * RT_TILE_SIZE;
-	lim_x = (int)fmin_fast((float)x_start + RT_TILE_SIZE, (float)ctx->gfx->width);
-	lim_y = (int)fmin_fast((float)y_start + RT_TILE_SIZE, (float)ctx->gfx->height);
-	w_span = lim_x - x_start;
-	y = y_start;
-	local_idx = 0;
-	while (y < lim_y)
-	{
-		render_line_local(ctx, &local_buffer[local_idx], y, x_start, lim_x);
-		local_idx += w_span;
-		y++;
-	}
-	y = y_start;
-	local_idx = 0;
-	while (y < lim_y)
-	{
-		fb_idx = y * ctx->gfx->width + x_start;
-		__builtin_memcpy(&ctx->gfx->framebuffer->pixels[fb_idx],
-			&local_buffer[local_idx], (size_t)w_span * sizeof(t_vec4));
-		local_idx += w_span;
-		y++;
-	}
-}
-
-static void	*thread_routine(void *arg)
-{
-	t_render_ctx	*ctx;
-	int				tile_idx;
-
-	ctx = (t_render_ctx *)arg;
-	while (1)
-	{
-		tile_idx = __atomic_fetch_add(&ctx->next_tile, 1, __ATOMIC_RELAXED);
-		if (tile_idx >= ctx->total_tiles)
-			break ;
-		render_tile(ctx, tile_idx);
-	}
-	return (NULL);
-}
 
 static void	init_ctx(t_render_ctx *ctx, t_graphics *gfx)
 {
@@ -94,27 +26,50 @@ static void	init_ctx(t_render_ctx *ctx, t_graphics *gfx)
 	ctx->total_tiles = ctx->tiles_x * ctx->tiles_y;
 }
 
-__attribute__((noinline))
+static t_thread_data	*alloc_thread_data(t_render_ctx *ctx, const int n)
+{
+	t_thread_data	*data;
+	int				i;
+	size_t			buf_size;
+
+	data = malloc(sizeof(t_thread_data) * (size_t)n);
+	if (!data)
+		return (NULL);
+	buf_size = RT_TILE_SIZE * RT_TILE_SIZE * sizeof(t_vec4);
+	i = 0;
+	while (i < n)
+	{
+		data[i].ctx = ctx;
+		data[i].buffer = malloc(buf_size);
+		if (!data[i].buffer)
+			return (free_thread_data(data, i), NULL);
+		i++;
+	}
+	return (data);
+}
+
 void	render_frame(t_graphics *gfx)
 {
 	t_render_ctx	ctx;
+	t_thread_data	*data;
 	pthread_t		*th;
-	long			n;
-	int				i;
+	int				n;
 
-	n = sysconf(_SC_NPROCESSORS_ONLN);
+	n = (int)sysconf(_SC_NPROCESSORS_ONLN);
 	if (n < 1)
 		n = 1;
 	th = malloc(sizeof(pthread_t) * (size_t)n);
 	if (!th)
 		return ;
 	init_ctx(&ctx, gfx);
+	data = alloc_thread_data(&ctx, n);
+	if (!data)
+	{
+		free(th);
+		return ;
+	}
 	camera_init_viewport(&gfx->scene->camera, gfx->width, gfx->height);
-	i = -1;
-	while (++i < n)
-		if (pthread_create(&th[i], NULL, thread_routine, &ctx) != 0)
-			break ;
-	while (--i >= 0)
-		pthread_join(th[i], NULL);
+	spawn_threads(th, data, n);
+	join_threads(th, data, n);
 	free(th);
 }

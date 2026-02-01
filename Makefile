@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/02/01 13:23:56 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/02/01 16:05:54 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,7 +72,7 @@ CORE_FILES			:= $(addprefix core/, core_init.c)
 GRAPHICS_FILES		:= $(addprefix graphics/, graphics_clear.c graphics_init.c \
 							graphics_present.c graphics_setup_hooks.c graphics_shutdown.c)
 RAYTRACER_FILES		:= $(addprefix raytracer/, camera_init_viewport.c render_frame.c \
-							render_pixel.c)
+							render_pixel.c render_threads.c render_tile.c)
 SCENE_FILES			:= $(addprefix scene/, build_bvh.c parse_color.c parse_cylinder.c \
 							parse_float.c parse_global.c parse_obj.c parse_obj_utils.c \
 							parse_plane.c parse_sphere.c parse_vec3.c scene_alloc.c \
