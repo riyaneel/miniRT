@@ -6,25 +6,24 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 20:04:49 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 12:02:40 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 19:58:48 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <immintrin.h>
 
 #include "graphics/graphics.h"
+#include "raytracer/post_process.h"
 #include "utils/maths_utils.h"
 
 static inline int	vec4_to_bgra(const t_vec4 color)
 {
-	const float			r = fclamp(color.x, 0.0f, 1.0f);
-	const float			g = fclamp(color.y, 0.0f, 1.0f);
-	const float			b = fclamp(color.z, 0.0f, 1.0f);
-	const unsigned int	ir = (unsigned)(r * 255.99f);
-	const unsigned int	ig = (unsigned)(g * 255.99f);
+	const t_vec4		pp = post_process(color);
+	const unsigned int	ir = (unsigned)(pp.x * 255.99f);
+	const unsigned int	ig = (unsigned)(pp.y * 255.99f);
+	const unsigned int	ib = (unsigned)(pp.z * 255.99f);
 
-	return ((int)(0xFF000000 | (ir << 16)
-		| (ig << 8) | (unsigned)(b * 255.99f)));
+	return ((int)(0xFF000000 | (ir << 16) | (ig << 8) | ib));
 }
 
 static inline void	process_block_sse(const t_vec4 *src, int *dst, int i)
