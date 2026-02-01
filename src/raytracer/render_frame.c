@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:47:03 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/19 01:17:48 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/19 01:45:46 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,34 +18,53 @@
 #include "raytracer/render.h"
 #include "utils/maths_utils.h"
 
-static void	render_line(const t_render_ctx *ctx, const int y, int x,
-		const int limit_x)
+static void	render_line_local(const t_render_ctx *ctx, t_vec4 *line_buffer,
+		const int y, int x, const int limit_x)
 {
-	int	idx;
+	int	local_x;
 
+	local_x = 0;
 	while (x < limit_x)
 	{
-		idx = y * ctx->gfx->width + x;
-		ctx->gfx->framebuffer->pixels[idx] = \
-			render_pixel(ctx->gfx->scene, x, y, 1);
+		line_buffer[local_x] = render_pixel(ctx->gfx->scene, x, y, 1);
 		x++;
+		local_x++;
 	}
 }
 
 static void	render_tile(const t_render_ctx *ctx, const int tile_idx)
 {
-	int	x;
-	int	y;
-	int	lim_x;
-	int	lim_y;
+	t_vec4	local_buffer[RT_TILE_SIZE * RT_TILE_SIZE];
+	int		x_start;
+	int		y_start;
+	int		y;
+	int		lim_x;
+	int		lim_y;
+	int		w_span;
+	int		fb_idx;
+	int		local_idx;
 
-	x = (tile_idx % ctx->tiles_x) * RT_TILE_SIZE;
-	y = (tile_idx / ctx->tiles_x) * RT_TILE_SIZE;
-	lim_x = (int)fmin_fast((float)x + RT_TILE_SIZE, (float)ctx->gfx->width);
-	lim_y = (int)fmin_fast((float)y + RT_TILE_SIZE, (float)ctx->gfx->height);
+	x_start = (tile_idx % ctx->tiles_x) * RT_TILE_SIZE;
+	y_start = (tile_idx / ctx->tiles_x) * RT_TILE_SIZE;
+	lim_x = (int)fmin_fast((float)x_start + RT_TILE_SIZE, (float)ctx->gfx->width);
+	lim_y = (int)fmin_fast((float)y_start + RT_TILE_SIZE, (float)ctx->gfx->height);
+	w_span = lim_x - x_start;
+	y = y_start;
+	local_idx = 0;
 	while (y < lim_y)
 	{
-		render_line(ctx, y, x, lim_x);
+		render_line_local(ctx, &local_buffer[local_idx], y, x_start, lim_x);
+		local_idx += w_span;
+		y++;
+	}
+	y = y_start;
+	local_idx = 0;
+	while (y < lim_y)
+	{
+		fb_idx = y * ctx->gfx->width + x_start;
+		__builtin_memcpy(&ctx->gfx->framebuffer->pixels[fb_idx],
+			&local_buffer[local_idx], (size_t)w_span * sizeof(t_vec4));
+		local_idx += w_span;
 		y++;
 	}
 }

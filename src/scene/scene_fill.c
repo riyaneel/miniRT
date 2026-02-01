@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 08:18:48 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/17 12:31:10 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/19 01:29:32 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	count_objects(t_scene *scn, char *data)
 		if (!*p)
 			break ;
 		if (!ft_strncmp(p, "sp", 2) && ft_isspace(p[2]))
-			scn->num_spheres++;
+			scn->spheres.count++;
 		else if (!ft_strncmp(p, "pl", 2) && ft_isspace(p[2]))
 			scn->num_planes++;
 		else if (!ft_strncmp(p, "cy", 2) && ft_isspace(p[2]))

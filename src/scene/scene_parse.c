@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:05:33 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/17 12:34:02 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/19 01:44:27 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,47 @@
 #include "core/memory/ft_memory.h"
 #include "core/string/ft_string.h"
 
+static inline int	align_count_simd(const int count)
+{
+	return ((count + 3) & ~3);
+}
+
+static bool	alloc_spheres_soa(t_arena *arena, t_scene *scn)
+{
+	const int	count = scn->spheres.count;
+	const int	pad_count = align_count_simd(count);
+	size_t		bytes_f;
+	size_t		bytes_c;
+
+	if (count == 0)
+		return (true);
+	bytes_f = (size_t)pad_count * sizeof(float);
+	bytes_c = (size_t)pad_count * sizeof(t_vec4);
+	scn->spheres.x = arena_alloc_align(arena, bytes_f, 32);
+	scn->spheres.y = arena_alloc_align(arena, bytes_f, 32);
+	scn->spheres.z = arena_alloc_align(arena, bytes_f, 32);
+	scn->spheres.r_sq = arena_alloc_align(arena, bytes_f, 32);
+	scn->spheres.inv_r = arena_alloc_align(arena, bytes_f, 32);
+	scn->spheres.colors = arena_alloc_align(arena, bytes_c, 32);
+	if (!scn->spheres.x || !scn->spheres.y || !scn->spheres.z
+		|| !scn->spheres.r_sq || !scn->spheres.inv_r || !scn->spheres.colors)
+		return (false);
+	for (int i = count; i < pad_count; i++)
+	{
+		scn->spheres.x[i] = 0.0f;
+		scn->spheres.y[i] = 0.0f;
+		scn->spheres.z[i] = 0.0f;
+		scn->spheres.r_sq[i] = -1.0f;
+		scn->spheres.inv_r[i] = 1.0f;
+		scn->spheres.colors[i] = (t_vec4){{0, 0, 0, 0}};
+	}
+	return (true);
+}
+
 static bool	alloc_arrays(t_arena *arena, t_scene *scn)
 {
-	if (scn->num_spheres)
-		scn->spheres = arena_alloc_align(arena, sizeof(t_sphere)
-				* (size_t)scn->num_spheres, 16);
+	if (!alloc_spheres_soa(arena, scn))
+		return (false);
 	if (scn->num_planes)
 		scn->planes = arena_alloc_align(arena, sizeof(t_plane)
 				* (size_t)scn->num_planes, 16);
@@ -33,8 +69,7 @@ static bool	alloc_arrays(t_arena *arena, t_scene *scn)
 	if (scn->num_meshes)
 		scn->meshes = arena_alloc_align(arena, sizeof(t_mesh)
 				* (size_t)scn->num_meshes, 16);
-	if ((scn->num_spheres && !scn->spheres)
-		|| (scn->num_planes && !scn->planes)
+	if ((scn->num_planes && !scn->planes)
 		|| (scn->num_cylinders && !scn->cylinders)
 		|| (scn->num_meshes && !scn->meshes))
 		return (false);
@@ -133,6 +168,6 @@ t_scene	*scene_parse(t_arena *arena, const char *filename)
 	if (!validate_scene(scn))
 		return (NULL);
 	printf("[Scene] Parsed OK: %d Sp, %d Pl, %d Cy\n",
-		scn->num_spheres, scn->num_planes, scn->num_cylinders);
+		scn->spheres.count, scn->num_planes, scn->num_cylinders);
 	return (scn);
 }

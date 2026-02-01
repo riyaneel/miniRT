@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:41:25 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 19:22:05 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/01/19 01:30:15 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,14 @@
 # include "vectors/vector_types.h"
 
 typedef struct s_sphere {
-	t_vec4	center;
-	t_vec4	color;
-	float	radius;
-	float	radius_sq;
-	float	padding[2];
+	float	*x;
+	float	*y;
+	float	*z;
+	float	*r_sq;
+	float	*inv_r;
+	t_vec4	*colors;
+	int		count;
+	uint8_t	padding[12];
 }	t_sphere;
 
 typedef struct s_plane {
@@ -66,18 +69,17 @@ typedef struct s_light {
 }	t_light;
 
 typedef struct s_scene {
-	t_sphere	*spheres;
+	t_sphere	spheres;
 	t_plane		*planes;
 	t_cylinder	*cylinders;
 	t_mesh		*meshes;
-	int			num_spheres;
 	int			num_planes;
 	int			num_cylinders;
 	int			num_meshes;
 	bool		has_cam;
 	bool		has_amb;
 	bool		has_light;
-	uint8_t		padding[13];
+	uint8_t		padding[9];
 	t_camera	camera;
 	t_ambient	ambient;
 	t_light		light;
