@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:43:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/17 13:02:36 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 13:19:32 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 void	skip_formatting(char **p);
 
 float	parse_float(char **p);
+
+bool	parse_global(t_scene *scn, char **p);
 
 t_vec4	parse_vec3(char **p, float w);
 
