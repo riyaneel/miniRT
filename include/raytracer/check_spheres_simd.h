@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 16:27:43 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:04:27 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:35:46 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ static inline void	sphere_record_hit(t_sphere_hit_ctx *ctx, const int idx,
 	normal = vec4_scale(normal, ctx->s->inv_r[idx]);
 	hit_set_face_normal(ctx->rec, ctx->r, normal);
 	ctx->rec->color_obj = ctx->s->colors[idx];
+	ctx->rec->type = HIT_SPHERE;
+	ctx->rec->obj_center = center;
 }
 
 static inline void	sphere_process_hit(t_sphere_hit_ctx *ctx,

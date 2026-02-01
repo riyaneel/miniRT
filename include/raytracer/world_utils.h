@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 17:59:16 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:04:35 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:35:53 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ static inline bool	check_planes(const t_scene *scn, const t_ray *r,
 			bounds->y = tmp.t;
 			*rec = tmp;
 			rec->color_obj = scn->planes[i].color;
+			rec->type = HIT_PLANE;
 		}
 		i++;
 	}
@@ -58,6 +59,9 @@ static inline bool	check_cylinders(const t_scene *scn, const t_ray *r,
 			bounds->y = tmp.t;
 			*rec = tmp;
 			rec->color_obj = scn->cylinders[i].color;
+			rec->type = HIT_CYLINDER;
+			rec->obj_center = scn->cylinders[i].center;
+			rec->obj_axis = scn->cylinders[i].axis;
 		}
 		i++;
 	}
@@ -79,6 +83,7 @@ static inline bool	check_meshes(const t_scene *scn, const t_ray *r,
 			hit = true;
 			bounds->y = rec->t;
 			rec->color_obj = scn->meshes[i].color;
+			rec->type = HIT_MESH;
 		}
 		i++;
 	}
