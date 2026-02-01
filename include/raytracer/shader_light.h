@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 17:46:46 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:47:55 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 19:36:04 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,28 +35,24 @@ static inline t_light_calc	get_light_dir(const t_light *light, const t_vec4 p)
 	return (lc);
 }
 
-static inline t_vec4	compute_diffuse_light(const t_light *light,
-		const t_vec4 color, const t_hit *rec, const t_vec4 light_dir)
+static inline t_vec4	compute_diffuse(const t_light *light, const t_vec4 color,
+		const t_vec4 normal, const t_vec4 light_dir)
 {
 	float	diff;
-	t_vec4	diffuse;
 
-	diff = fmax_fast(vec4_dot(rec->normal, light_dir), 0.0f);
-	diffuse = vec4_mul(light->color, color);
-	return (vec4_scale(diffuse, light->ratio * diff));
+	diff = fmax_fast(vec4_dot(normal, light_dir), 0.0f);
+	return (vec4_scale(vec4_mul(light->color, color), light->ratio * diff));
 }
 
-static inline t_vec4	compute_specular_light(const t_light *light,
-		const t_ray *r, const t_hit *rec, const t_vec4 light_dir)
+static inline t_vec4	compute_specular(const t_light *light, const t_vec4 view,
+		const t_vec4 normal, const t_vec4 light_dir)
 {
-	t_vec4	view_dir;
 	t_vec4	reflect_dir;
 	float	spec;
 
-	view_dir = vec4_scale(r->dir, -1.0f);
-	reflect_dir = vec4_sub(vec4_scale(rec->normal,
-				2.0f * vec4_dot(rec->normal, light_dir)), light_dir);
-	spec = powf(fmax_fast(vec4_dot(view_dir, reflect_dir), 0.0f), 32.0f);
+	reflect_dir = vec4_sub(vec4_scale(normal,
+				2.0f * vec4_dot(normal, light_dir)), light_dir);
+	spec = powf(fmax_fast(vec4_dot(view, reflect_dir), 0.0f), 32.0f);
 	return (vec4_scale(light->color, light->ratio * spec * 0.6f));
 }
 
