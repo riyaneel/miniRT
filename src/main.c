@@ -26,13 +26,13 @@
 #define MEMORY_POOL_SIZE (256 * 1024 * 1024)
 
 __attribute__((always_inline))
-static inline int	kill(const char *msg, t_arena *arena)
+static inline void	kill(const char *msg, t_arena *arena)
 {
 	if (msg)
 		ft_dprintf(STDERR_FILENO, "%s\n", msg);
 	if (arena)
 		arena_destroy(arena);
-	return (1);
+	exit(1);
 }
 
 __attribute__((always_inline))
@@ -42,9 +42,9 @@ static inline void	check_file_extension(const char *filename)
 
 	len = ft_strlen(filename);
 	if (len < 4)
-		kill("Error\nFile must have .rt extension\n", NULL);
+		kill("Error\nFile must have .rt extension", NULL);
 	if (ft_strncmp(filename + len - 3, ".rt", 3) != 0)
-		kill("Error\nFile must have .rt extension\n", NULL);
+		kill("Error\nFile must have .rt extension", NULL);
 }
 
 int	main(const int argc, char **argv)
@@ -55,18 +55,18 @@ int	main(const int argc, char **argv)
 
 	arena = NULL;
 	if (argc != 2)
-		return (kill("Error\nUsage: ./miniRT <scene_file.rt>", arena));
+		kill("Error\nUsage: ./miniRT <scene_file.rt>", arena);
 	check_file_extension(argv[1]);
 	core_init();
 	arena = arena_create((t_arena_config){MEMORY_POOL_SIZE});
 	if (!arena)
-		return (kill("Error\nFatal: Could not allocate memory arena.", arena));
+		kill("Error\nFatal: Could not allocate memory arena.", arena);
 	scene = scene_parse(arena, argv[1]);
 	if (!scene)
-		return (kill(NULL, arena));
+		kill(NULL, arena);
 	ft_bzero(&gfx, sizeof(t_graphics));
 	if (!graphics_init(&gfx, arena, WIN_W, WIN_H))
-		return (kill("Error\nFatal: Graphics initialization failed.", arena));
+		kill("Error\nFatal: Graphics initialization failed.", arena);
 	gfx.scene = scene;
 	graphics_setup_hooks(&gfx);
 	graphics_clear(&gfx);
