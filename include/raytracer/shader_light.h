@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 17:46:46 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 19:36:04 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 19:37:22 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ static inline t_light_calc	get_light_dir(const t_light *light, const t_vec4 p)
 	return (lc);
 }
 
-static inline t_vec4	compute_diffuse(const t_light *light, const t_vec4 color,
-		const t_vec4 normal, const t_vec4 light_dir)
+static inline t_vec4	compute_diffuse(const t_light *light,
+		const t_vec4 color, const t_vec4 normal, const t_vec4 light_dir)
 {
 	float	diff;
 
@@ -44,8 +44,8 @@ static inline t_vec4	compute_diffuse(const t_light *light, const t_vec4 color,
 	return (vec4_scale(vec4_mul(light->color, color), light->ratio * diff));
 }
 
-static inline t_vec4	compute_specular(const t_light *light, const t_vec4 view,
-		const t_vec4 normal, const t_vec4 light_dir)
+static inline t_vec4	compute_specular(const t_light *light,
+		const t_vec4 view, const t_vec4 normal, const t_vec4 light_dir)
 {
 	t_vec4	reflect_dir;
 	float	spec;

@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 19:24:37 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 19:36:01 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 19:37:39 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ static inline t_vec4	apply_bump(const t_hit *rec)
 	t_vec4	grad;
 	t_vec4	perturb;
 
-	if (rec->type == HIT_PLANE || rec->type == HIT_NONE || rec->type == HIT_MESH)
+	if (rec->type == HIT_PLANE || rec->type == HIT_NONE
+		|| rec->type == HIT_MESH)
 		return (rec->normal);
 	grad = bump_gradient(rec->p);
 	perturb = vec4_sub(rec->normal, vec4_scale(grad, BUMP_STRENGTH));
