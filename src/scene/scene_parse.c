@@ -6,18 +6,16 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:05:33 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/19 01:44:27 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 12:38:56 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <stdio.h>
-#include <unistd.h>
 
 #include "scene/scene_parser.h"
 
 #include "core/ctype/ft_ctype.h"
 #include "core/memory/ft_memory.h"
 #include "core/string/ft_string.h"
+#include "io/ft_printf.h"
 
 static inline int	align_count_simd(const int count)
 {
@@ -117,7 +115,7 @@ static void	load_meshes(t_scene *scn, t_arena *arena, char *p)
 			while (*p && *p != '\n' && !ft_isspace(*p) && i < 255)
 				path[i++] = *p++;
 			path[i] = '\0';
-			printf("[Mesh %d] Loading '%s'...\n", idx, path);
+			ft_printf("[Mesh %d] Loading '%s'...\n", idx, path);
 			tmp = parse_obj(arena, path);
 			if (tmp)
 			{
@@ -137,11 +135,11 @@ static bool	validate_scene(const t_scene *scn)
 {
 	if (!scn->has_cam || !scn->has_amb || !scn->has_light)
 	{
-		printf("Error\nMissing mandatory scene elements (A, C, L).\n");
+		ft_dprintf(2, "Error\nMissing mandatory scene elements (A, C, L).\n");
 		return (false);
 	}
 	if (scn->num_meshes > 0)
-		printf("[Scene] %d Meshes loaded.\n", scn->num_meshes);
+		ft_printf("[Scene] %d Meshes loaded.\n", scn->num_meshes);
 	return (true);
 }
 
@@ -153,7 +151,7 @@ t_scene	*scene_parse(t_arena *arena, const char *filename)
 	data = read_file_to_arena(arena, filename);
 	if (!data)
 	{
-		printf("Error\nCannot read file '%s'\n", filename);
+		ft_dprintf(2, "Error\nCannot read file '%s'\n", filename);
 		return (NULL);
 	}
 	scn = arena_alloc(arena, sizeof(t_scene));
@@ -167,7 +165,7 @@ t_scene	*scene_parse(t_arena *arena, const char *filename)
 	load_meshes(scn, arena, data);
 	if (!validate_scene(scn))
 		return (NULL);
-	printf("[Scene] Parsed OK: %d Sp, %d Pl, %d Cy\n",
+	ft_printf("[Scene] Parsed OK: %d Sp, %d Pl, %d Cy\n",
 		scn->spheres.count, scn->num_planes, scn->num_cylinders);
 	return (scn);
 }
