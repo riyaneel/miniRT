@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 17:22:54 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 17:35:28 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:54:29 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,33 @@ static inline t_vec4	checker_sphere(const t_hit *rec)
 	return (checker_blend(rec->color_obj, check));
 }
 
+static inline t_vec4	build_tangent(const t_vec4 axis)
+{
+	t_vec4	up;
+	t_vec4	tangent;
+
+	if (fabsf(axis.y) < 0.999f)
+		up = (t_vec4){{0.0f, 1.0f, 0.0f, 0.0f}};
+	else
+		up = (t_vec4){{1.0f, 0.0f, 0.0f, 0.0f}};
+	tangent = vec4_cross(axis, up);
+	return (vec4_normalize(tangent));
+}
+
 static inline t_vec4	checker_cylinder(const t_hit *rec)
 {
 	t_vec4	local;
-	t_vec4	radial;
+	t_vec4	tangent;
+	t_vec4	bitangent;
 	float	h;
 	float	u;
 
 	local = vec4_sub(rec->p, rec->obj_center);
 	h = vec4_dot(local, rec->obj_axis);
-	radial = vec4_sub(local, vec4_scale(rec->obj_axis, h));
-	radial = vec4_normalize(radial);
-	u = (atan2f(radial.x, radial.z) + (float)M_PI) / (2.0f * (float)M_PI);
+	tangent = build_tangent(rec->obj_axis);
+	bitangent = vec4_cross(rec->obj_axis, tangent);
+	u = atan2f(vec4_dot(local, bitangent), vec4_dot(local, tangent));
+	u = (u + (float)M_PI) / (2.0f * (float)M_PI);
 	return (checker_blend(rec->color_obj,
 			checker_pattern(u, h, CHECKER_SCALE_CYL)));
 }
