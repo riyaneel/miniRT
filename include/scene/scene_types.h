@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:41:25 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/19 01:30:15 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:41:06 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,16 +73,16 @@ typedef struct s_scene {
 	t_plane		*planes;
 	t_cylinder	*cylinders;
 	t_mesh		*meshes;
+	t_light		*lights;
 	int			num_planes;
 	int			num_cylinders;
 	int			num_meshes;
+	int			num_lights;
 	bool		has_cam;
 	bool		has_amb;
-	bool		has_light;
-	uint8_t		padding[9];
+	uint8_t		padding[14];
 	t_camera	camera;
 	t_ambient	ambient;
-	t_light		light;
 }	t_scene;
 
 #endif // SCENE_TYPES_H

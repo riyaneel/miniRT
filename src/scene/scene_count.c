@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 13:15:44 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 13:20:30 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:41:54 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static inline void	count_primitive(t_scene *scn, const char *p)
 		scn->num_cylinders++;
 	else if (!ft_strncmp(p, "obj", 3) && ft_isspace(p[3]))
 		scn->num_meshes++;
+	else if (*p == 'L' && ft_isspace(p[1]))
+		scn->num_lights++;
 }
 
 void	count_objects(t_scene *scn, char *data)

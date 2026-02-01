@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 09:05:33 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 13:31:14 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:46:12 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 static bool	validate_scene(const t_scene *scn)
 {
-	if (!scn->has_cam || !scn->has_amb || !scn->has_light)
+	if (!scn->has_cam || !scn->has_amb || scn->num_lights == 0)
 	{
 		ft_dprintf(2, "Error\nMissing mandatory scene elements (A, C, L).\n");
 		return (false);

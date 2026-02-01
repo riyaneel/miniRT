@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 13:21:51 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 13:31:11 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:43:14 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static inline void	init_sphere_padding(const t_scene *scn, const int start,
 		scn->spheres.z[i] = 0.0f;
 		scn->spheres.r_sq[i] = -1.0f;
 		scn->spheres.inv_r[i] = 1.0f;
-		scn->spheres.colors[i] = (t_vec4){{0, 0, 0, 0}};
+		scn->spheres.colors[i] = vec_init(0, 0, 0, 0);
 		i++;
 	}
 }
@@ -84,9 +84,13 @@ bool	alloc_arrays(t_arena *arena, t_scene *scn)
 	if (scn->num_meshes)
 		scn->meshes = arena_alloc_align(arena, sizeof(t_mesh)
 				* (size_t)scn->num_meshes, 16);
+	if (scn->num_lights)
+		scn->lights = arena_alloc_align(arena, sizeof(t_light)
+				* (size_t)scn->num_lights, 16);
 	if ((scn->num_planes && !scn->planes)
 		|| (scn->num_cylinders && !scn->cylinders)
-		|| (scn->num_meshes && !scn->meshes))
+		|| (scn->num_meshes && !scn->meshes)
+		|| (scn->num_lights && !scn->lights))
 		return (false);
 	return (true);
 }

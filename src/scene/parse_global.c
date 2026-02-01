@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/01 13:18:00 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 13:19:43 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:44:12 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,30 +56,28 @@ static bool	parse_camera(t_scene *scn, char **p)
 	return (true);
 }
 
-static bool	parse_light(t_scene *scn, char **p)
+static bool	parse_light(const t_scene *scn, char **p, int *idx)
 {
-	if (scn->has_light)
-	{
-		ft_dprintf(2, "Error\nLight (L) already defined\n");
-		return (false);
-	}
+	t_light	*light;
+
 	(*p)++;
-	scn->light.origin = parse_vec3(p, 1.0f);
-	scn->light.ratio = parse_float(p);
-	if (!validate_ratio(scn->light.ratio, "Light"))
+	light = &scn->lights[*idx];
+	light->origin = parse_vec3(p, 1.0f);
+	light->ratio = parse_float(p);
+	if (!validate_ratio(light->ratio, "Light"))
 		return (false);
-	scn->light.color = parse_color(p);
-	scn->has_light = true;
+	light->color = parse_color(p);
+	(*idx)++;
 	return (true);
 }
 
-bool	parse_global(t_scene *scn, char **p)
+bool	parse_global(t_scene *scn, char **p, int *light_idx)
 {
 	if (**p == 'A' && ft_isspace((*p)[1]))
 		return (parse_ambient(scn, p));
 	if (**p == 'C' && ft_isspace((*p)[1]))
 		return (parse_camera(scn, p));
 	if (**p == 'L' && ft_isspace((*p)[1]))
-		return (parse_light(scn, p));
+		return (parse_light(scn, p, light_idx));
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 08:18:48 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 13:20:13 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:45:13 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static bool	process_line(t_scene *scn, char **p, int *counts)
 	if (!**p)
 		return (success);
 	if (**p == 'A' || **p == 'C' || **p == 'L')
-		success = parse_global(scn, p);
+		success = parse_global(scn, p, &counts[3]);
 	else if (!ft_strncmp(*p, "sp", 2))
 		parse_sphere(scn, &counts[0], p);
 	else if (!ft_strncmp(*p, "pl", 2))
@@ -41,11 +41,12 @@ static bool	process_line(t_scene *scn, char **p, int *counts)
 bool	fill_objects(t_scene *scn, char *data)
 {
 	char	*p;
-	int		counts[3];
+	int		counts[4];
 
 	counts[0] = 0;
 	counts[1] = 0;
 	counts[2] = 0;
+	counts[3] = 0;
 	p = data;
 	while (*p)
 	{
