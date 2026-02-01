@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 14:57:21 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 12:31:01 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 13:11:44 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,27 @@
 
 #define WIN_W 1920
 #define WIN_H 1080
-#define MEMORY_POOL_SIZE (256 * 1024 * 1024)
+
+__attribute__((always_inline))
+static inline size_t	get_pool_size(void)
+{
+	long	pages;
+	long	page_size;
+	size_t	total_ram;
+	size_t	pool_size;
+
+	pages = sysconf(_SC_PHYS_PAGES);
+	page_size = sysconf(_SC_PAGESIZE);
+	if (pages <= 0 || page_size <= 0)
+		return (128 * 1024 * 1024);
+	total_ram = (size_t)pages * (size_t)page_size;
+	pool_size = total_ram / 8;
+	if (pool_size < 64 * 1024 * 1024)
+		pool_size = 64 * 1024 * 1024;
+	if (pool_size > 1024 * 1024 * 1024)
+		pool_size = 1024 * 1024 * 1024;
+	return (pool_size);
+}
 
 __attribute__((always_inline))
 static inline void	kill(const char *msg, t_arena *arena)
@@ -58,7 +78,7 @@ int	main(const int argc, char **argv)
 		kill("Error\nUsage: ./miniRT <scene_file.rt>", arena);
 	check_file_extension(argv[1]);
 	core_init();
-	arena = arena_create((t_arena_config){MEMORY_POOL_SIZE});
+	arena = arena_create((t_arena_config){(long)get_pool_size()});
 	if (!arena)
 		kill("Error\nFatal: Could not allocate memory arena.", arena);
 	scene = scene_parse(arena, argv[1]);
