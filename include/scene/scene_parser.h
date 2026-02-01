@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 21:43:22 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/02/01 13:19:32 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 13:24:50 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,10 @@ void	obj_get_counts(const char *p, int *v_cnt, int *f_cnt);
 
 void	obj_parse_faces(const char *p, t_mesh *m, const t_vec4 *v,
 			int *ti);
+
+bool	alloc_arrays(t_arena *arena, t_scene *scn);
+
+void	load_meshes(const t_scene *scn, t_arena *arena, char *p);
 
 char	*read_file_to_arena(t_arena *arena, const char *file);
 
