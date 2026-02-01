@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 19:46:18 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 20:40:54 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:21:54 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,7 @@ void	graphics_present(const t_graphics *gfx);
 void	graphics_clear(t_graphics *gfx);
 
 void	graphics_setup_hooks(t_graphics *gfx);
+
+void	graphics_resize(t_graphics *gfx, int new_width, int new_height);
 
 #endif // GRAPHICS_H

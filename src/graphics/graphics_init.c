@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 19:39:08 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/11 19:55:03 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:21:20 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ static t_framebuffer	*framebuffer_init(t_arena *arena, const int width,
 		return (NULL);
 	framebuffer->width = width;
 	framebuffer->height = height;
-	framebuffer->size_bytes = (size_t)(width * height) * sizeof(t_vec4);
+	framebuffer->max_width = MAX_WIDTH;
+	framebuffer->max_height = MAX_HEIGHT;
+	framebuffer->size_bytes = (size_t)(MAX_WIDTH * MAX_HEIGHT) * sizeof(t_vec4);
 	framebuffer->pixels = arena_alloc_align(arena, framebuffer->size_bytes, 16);
 	return (framebuffer);
 }
@@ -32,6 +34,7 @@ bool	graphics_init(t_graphics *gfx, t_arena *arena, const int w, const int h)
 {
 	gfx->width = w;
 	gfx->height = h;
+	gfx->needs_render = true;
 	gfx->mlx = mlx_init();
 	if (!gfx->mlx)
 		return (false);
