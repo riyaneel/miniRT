@@ -6,7 +6,7 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 08:38:46 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2026/01/16 19:10:22 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:17:38 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ t_vec4	render_pixel(const t_scene *scn, const int x, const int y,
 	{
 		r = get_sample_ray(&scn->camera, x, y, &rng);
 		if (hit_world(scn, &r, vec_init(0.001f, FLT_MAX, 0, 0), &rec))
-			final_color = vec4_add(final_color, shade_ray(scn, &r, &rec));
+			final_color = vec4_add(final_color, shade_ray(scn, &r, &rec, &rng));
 		s++;
 	}
 	return (vec4_scale(final_color, 1.0f / (float)SAMPLES_PER_PIXEL));
