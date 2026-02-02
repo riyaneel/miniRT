@@ -6,7 +6,7 @@
 #    By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 12:10:50 by rel-qoqu          #+#    #+#              #
-#    Updated: 2026/02/01 18:22:29 by rel-qoqu         ###   ########.fr        #
+#    Updated: 2026/02/02 20:59:18 by rel-qoqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,6 +41,10 @@ LIBFT_LIB		:= $(LIBFT_DIR)/libft.a
 LIBFT_INC		:= -I$(LIBFT_DIR)/include
 LIBFT_FLAGS		:= -L$(LIBFT_DIR) -lft
 
+MLX_LIB			:= $(MLX_DIR)/libmlx.a
+MLX_INC			:= $(MLX_DIR)/include
+MLX_FLAGS		:= -L$(MLX_DIR) -lmlx -lX11 -lGL
+
 # Flags
 WARN_FLAGS		:= -Wall -Wextra -Werror -Wshadow -Wformat=2 -Winline \
 					-Wsign-conversion -Wconversion -Wcast-align -Wcast-qual \
@@ -51,14 +55,14 @@ WARN_FLAGS		:= -Wall -Wextra -Werror -Wshadow -Wformat=2 -Winline \
 POSIX_FLAGS			:= -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L
 DEPENDENCIES_FLAGS	:= -MMD -MP
 SECURE_FLAGS		:= -fstack-protector-strong
-INCLUDE_FLAGS		:= -I$(INCLUDE_DIR) $(LIBFT_INC) -isystem $(MLX_DIR)/include
+INCLUDE_FLAGS		:= -I$(INCLUDE_DIR) $(LIBFT_INC) -isystem $(MLX_INC)
 
 LTO_FLAGS			:= -flto
 SAN_FLAGS			:= -fsanitize=address,undefined
 
 C_FLAGS				:= $(WARN_FLAGS) $(POSIX_FLAGS) $(SECURE_FLAGS) $(DEPENDENCIES_FLAGS) \
 						$(INCLUDE_FLAGS) -std=c11 -march=native -msse2
-LD_LIBS				:= $(LIBFT_FLAGS) -L$(MLX_DIR) -lmlx -lX11 -lGL -lm
+LD_LIBS				:= $(LIBFT_FLAGS) $(MLX_FLAGS) -lm
 
 C_RELEASE_FLAGS		:= $(C_FLAGS) -O3 -fwrapv -ffast-math
 C_DEBUG_FLAGS		:= $(C_FLAGS) -Og -g3 -DDEBUG -ftrapv
@@ -103,7 +107,12 @@ $(LIBFT_LIB):
 	@make -C $(LIBFT_DIR) -j > /dev/null
 	@printf "[\033[35mLibft\033[0m]     Done.\n"
 
-$(NAME): $(OBJS_RELEASE) $(LIBFT_LIB)
+$(MLX_LIB):
+	@printf "[\033[35mMLX\033[0m]     Building MLX...\n"
+	@make -C $(MLX_DIR) -j > /dev/null
+	@printf "[\033[35mMLX\033[0m]     Done.\n"
+
+$(NAME): $(OBJS_RELEASE) $(LIBFT_LIB) $(MLX_LIB)
 	@printf "[\033[33mLinking\033[0m]   %-35s\n" "$@"
 	@$(C_COMPILER) $(LTO_FLAGS) $^ $(LD_LIBS) -o $@
 
@@ -123,7 +132,7 @@ $(REL_ASM_DIR)/%.s: $(SOURCE_DIR)/%.c
 
 debug: $(DEBUG_NAME)
 
-$(DEBUG_NAME): $(OBJS_DEBUG) $(LIBFT_LIB)
+$(DEBUG_NAME): $(OBJS_DEBUG) $(LIBFT_LIB) $(MLX_LIB)
 	@printf "[\033[33mLinking\033[0m]   %-35s\n" "$@"
 	@$(C_COMPILER) $(LTO_FLAGS) $(SAN_FLAGS) $^ $(LD_LIBS) -o $@
 
@@ -144,11 +153,15 @@ $(DBG_ASM_DIR)/%.s: $(SOURCE_DIR)/%.c
 clean:
 	@printf "Removing build artefacts...\n"
 	@$(RMD) $(BUILD_DIR)
+	$(MAKE) -C $(LIBFT_DIR) clean
+	$(MAKE) -C $(MLX_DIR) clean
 	@printf "Build artefacts removed.\n"
 
 fclean: clean
 	@printf "Removing executables...\n"
 	@$(RMF) $(NAME) $(DEBUG_NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(MLX_DIR) fclean
 	@printf "Executables removed.\n"
 
 re: fclean all
