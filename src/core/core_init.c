@@ -6,10 +6,11 @@
 /*   By: rel-qoqu <rel-qoqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 17:04:57 by rel-qoqu          #+#    #+#             */
-/*   Updated: 2025/12/17 17:15:55 by rel-qoqu         ###   ########.fr       */
+/*   Updated: 2026/02/02 21:15:25 by rel-qoqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <pmmintrin.h>
 #include <xmmintrin.h>
 
 #include "core/rt_core.h"
