@@ -92,3 +92,4 @@ static inline bool	check_cy_root(const t_cylinder *cy, const t_ray *r,
 }
 
 #endif // INTERSECTIONS_CYLINDER_UTILS_H
+
